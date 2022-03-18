@@ -14,6 +14,14 @@ You can install the package via composer:
 composer require dive-be/nova-flexible-url-field
 ```
 
+### Usage
+
+You must make sure to add a `linkable` morph to the table of the model you'd like to make linkable. You can do this via a migration.
+
+```php
+$table->morphs('linkable');
+```
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
