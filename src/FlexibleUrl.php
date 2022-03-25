@@ -2,6 +2,7 @@
 
 namespace Dive\FlexibleUrlField;
 
+use Illuminate\Database\Eloquent\Model;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -10,19 +11,23 @@ class FlexibleUrl extends Field
     /** @var string */
     public $component = 'flexible-url-field';
 
-    protected $linkedType = null;
+    protected bool $isTranslatable = false;
 
-    protected $linked = [
-        'initial_type' => null,
-        'initial_id' => null,
-    ];
+    protected array $linked = [];
 
     public function __construct(string $name, string $attribute = null, callable $resolveCallback = null)
     {
-        parent::__construct($name, $attribute, function ($value, $resource) {
+        parent::__construct($name, $attribute, function ($value, $resource) use ($attribute) {
+            $this->isTranslatable = $this->isTranslatable($resource);
+
             $this->linked = [
+                'locales' => config('nova-translatable.locales'),
+                'translatable' => $this->isTranslatable,
                 'initial_type' => $resource->linkable_type,
                 'initial_id' => $resource->linkable_id,
+                'initial_manual_value' => $this->isTranslatable
+                    ? $resource->getTranslations($attribute)
+                    : $resource->getAttribute($attribute)
             ];
         });
     }
@@ -33,6 +38,7 @@ class FlexibleUrl extends Field
         $model,
         $attribute
     ) {
+        // Check if the model is translatable
         if ($request->exists($requestAttribute)) {
             $data = $request[$requestAttribute];
 
@@ -40,6 +46,7 @@ class FlexibleUrl extends Field
 
             /*
             if ($isRegularUrl) {
+                // 1. Check if translatable: $this->isTranslatable($model)
                 // 1. The user has entered fixed URLs
                 $model->{$requestAttribute} = $data['value'];
             } else {
@@ -55,12 +62,9 @@ class FlexibleUrl extends Field
 
     public function addLinkable(
         string $class,
-        bool $translatable,
         array $columnsToQuery,
         callable $displayCallback = null
     ): self {
-        $this->linkedType = $class;
-
         $values = $class::query()
             ->get(array_merge(['id'], $columnsToQuery))
             ->map(function ($record) use ($displayCallback) {
@@ -71,8 +75,15 @@ class FlexibleUrl extends Field
             });
 
         return $this->withMeta([
-            'values' => $values,
-            'translatable' => $translatable,
+            'linked_values' => $values
         ] + $this->linked);
+    }
+
+    private function isTranslatable(Model|string $model): bool
+    {
+        return array_key_exists(
+            "Spatie\Translatable\HasTranslations",
+            class_uses($model)
+        );
     }
 }

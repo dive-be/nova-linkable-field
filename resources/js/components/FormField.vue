@@ -20,7 +20,7 @@
             </div>
 
             <select v-if="type === 'linked'" class="w-full form-control form-input form-input-bordered">
-                <option v-for="value in field.values" v-model="value.id">
+                <option v-for="value in field.linked_values" v-model="value.id">
                     {{ value.display }}
                 </option>
             </select>
@@ -39,15 +39,12 @@ export default {
     data() {
         return {
             type: (this.initial_type == null) ? 'manual' : 'linked',
-            id: this.initial_id
+            linked_id: this.initial_id,
+            manual_value: this.field.value
         }
     },
 
     methods: {
-        setInitialValue() {
-            this.value = this.field.value || ''
-        },
-
         fill(formData) {
             formData.append(this.field.attribute, this.value || '')
         },

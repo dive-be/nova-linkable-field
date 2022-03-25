@@ -1,6 +1,6 @@
 # A Nova field to link URLs (manually or to models)
 
-This package allows you to provide a field that can **link to a a model instance (of your choosing)** or to a **a manual url**.
+This package allows you to provide a field that can **link to a model instance (of your choosing)** or to **a manual url**.
 
 ## Requirements
 

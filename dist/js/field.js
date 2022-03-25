@@ -450,15 +450,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             type: this.initial_type == null ? 'manual' : 'linked',
-            id: this.initial_id
+            linked_id: this.initial_id,
+            manual_value: this.field.value
         };
     },
 
 
     methods: {
-        setInitialValue: function setInitialValue() {
-            this.value = this.field.value || '';
-        },
         fill: function fill(formData) {
             formData.append(this.field.attribute, this.value || '');
         }
@@ -26898,7 +26896,7 @@ var render = function() {
                 staticClass:
                   "w-full form-control form-input form-input-bordered"
               },
-              _vm._l(_vm.field.values, function(value) {
+              _vm._l(_vm.field.linked_values, function(value) {
                 return _c(
                   "option",
                   {
