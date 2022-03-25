@@ -1,13 +1,16 @@
 <template>
     <default-field :field="field" :errors="errors" :show-help-text="showHelpText">
         <template slot="field">
+            {{ field }}
+
             <label class="mb-2 block">Type</label>
             <select v-model="type" class="w-full form-control form-input form-input-bordered">
                 <option value="manual">Manual URL</option>
                 <option value="linked">Linked</option>
             </select>
             <label class="mb-2 mt-4 block">Value</label>
-            <div class="">
+
+            <div class="" v-if="!field.translatable">
                 <input
                     v-if="type === 'manual'"
                     :id="field.name"
@@ -17,6 +20,9 @@
                     :placeholder="field.name"
                     v-model="value"
                 />
+            </div>
+            <div v-else>
+                <p>This field is translatable.</p>
             </div>
 
             <select v-if="type === 'linked'" class="w-full form-control form-input form-input-bordered">
@@ -34,11 +40,14 @@ import {FormField, HandlesValidationErrors} from 'laravel-nova'
 export default {
     mixins: [FormField, HandlesValidationErrors],
 
-    props: ['resourceName', 'resourceId', 'field', 'initial_type', 'initial_id'],
+    props: [
+        'resourceName', 'resourceId', 'field',
+        'initial_type', 'initial_id'
+    ],
 
     data() {
         return {
-            type: (this.initial_type == null) ? 'manual' : 'linked',
+            type: (this.initial_type == null || this.initial_type === '') ? 'manual' : 'linked',
             linked_id: this.initial_id,
             manual_value: this.field.value
         }

@@ -439,6 +439,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -449,7 +455,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     data: function data() {
         return {
-            type: this.initial_type == null ? 'manual' : 'linked',
+            type: this.initial_type == null || this.initial_type === '' ? 'manual' : 'linked',
             linked_id: this.initial_id,
             manual_value: this.field.value
         };
@@ -26816,6 +26822,7 @@ var render = function() {
     },
     [
       _c("template", { slot: "field" }, [
+        _vm._v("\n        " + _vm._s(_vm.field) + "\n\n        "),
         _c("label", { staticClass: "mb-2 block" }, [_vm._v("Type")]),
         _vm._v(" "),
         _c(
@@ -26857,37 +26864,39 @@ var render = function() {
         _vm._v(" "),
         _c("label", { staticClass: "mb-2 mt-4 block" }, [_vm._v("Value")]),
         _vm._v(" "),
-        _c("div", {}, [
-          _vm.type === "manual"
-            ? _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.value,
-                    expression: "value"
-                  }
-                ],
-                staticClass:
-                  "w-full form-control form-input form-input-bordered",
-                class: _vm.errorClasses,
-                attrs: {
-                  id: _vm.field.name,
-                  type: "text",
-                  placeholder: _vm.field.name
-                },
-                domProps: { value: _vm.value },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+        !_vm.field.translatable
+          ? _c("div", {}, [
+              _vm.type === "manual"
+                ? _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.value,
+                        expression: "value"
+                      }
+                    ],
+                    staticClass:
+                      "w-full form-control form-input form-input-bordered",
+                    class: _vm.errorClasses,
+                    attrs: {
+                      id: _vm.field.name,
+                      type: "text",
+                      placeholder: _vm.field.name
+                    },
+                    domProps: { value: _vm.value },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.value = $event.target.value
+                      }
                     }
-                    _vm.value = $event.target.value
-                  }
-                }
-              })
-            : _vm._e()
-        ]),
+                  })
+                : _vm._e()
+            ])
+          : _c("div", [_c("p", [_vm._v("This field is translatable.")])]),
         _vm._v(" "),
         _vm.type === "linked"
           ? _c(

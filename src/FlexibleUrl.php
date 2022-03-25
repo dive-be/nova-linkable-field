@@ -12,7 +12,6 @@ class FlexibleUrl extends Field
     public $component = 'flexible-url-field';
 
     protected bool $isTranslatable = false;
-
     protected array $linked = [];
 
     public function __construct(string $name, string $attribute = null, callable $resolveCallback = null)
@@ -28,7 +27,9 @@ class FlexibleUrl extends Field
                 'initial_manual_value' => $this->isTranslatable
                     ? $resource->getTranslations($attribute)
                     : $resource->getAttribute($attribute)
-            ];
+            ] + $this->linked;
+
+            $this->withMeta($this->linked);
         });
     }
 
@@ -60,7 +61,7 @@ class FlexibleUrl extends Field
         }
     }
 
-    public function addLinkable(
+    public function withLinkable(
         string $class,
         array $columnsToQuery,
         callable $displayCallback = null
@@ -74,9 +75,11 @@ class FlexibleUrl extends Field
                 ];
             });
 
-        return $this->withMeta([
+        $this->linked = [
             'linked_values' => $values
-        ] + $this->linked);
+        ];
+
+        return $this;
     }
 
     private function isTranslatable(Model|string $model): bool
