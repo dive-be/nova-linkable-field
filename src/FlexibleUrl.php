@@ -39,16 +39,19 @@ class FlexibleUrl extends Field
         $model,
         $attribute
     ) {
-        // Check if the model is translatable
         if ($request->exists($requestAttribute)) {
-            $data = $request[$requestAttribute];
+            $value = $request[$requestAttribute];
+            $type = $request[$requestAttribute . "-type"];
 
-            dd($data);
+            if ($this->isTranslatable) {
+                $value = json_decode($value);
+            }
+
+            dd($type, $value);
 
             /*
             if ($isRegularUrl) {
                 // 1. Check if translatable: $this->isTranslatable($model)
-                // 1. The user has entered fixed URLs
                 $model->{$requestAttribute} = $data['value'];
             } else {
                 // 1. The user has chosen a related model
@@ -63,6 +66,7 @@ class FlexibleUrl extends Field
 
     public function withLinkable(
         string $class,
+        string $readableName,
         array $columnsToQuery,
         callable $displayCallback = null
     ): self {
@@ -76,6 +80,7 @@ class FlexibleUrl extends Field
             });
 
         $this->linked = [
+            'linked_name' => $readableName,
             'linked_values' => $values
         ];
 

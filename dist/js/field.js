@@ -457,14 +457,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         return {
             type: this.initial_type == null || this.initial_type === '' ? 'manual' : 'linked',
             linked_id: this.initial_id,
-            manual_value: this.field.value
+            manual_value: this.field.initial_manual_value
         };
     },
 
 
     methods: {
         fill: function fill(formData) {
-            formData.append(this.field.attribute, this.value || '');
+            formData.append(this.field.attribute + "-type", this.type);
+            if (this.type === 'manual') {
+                formData.append(this.field.attribute, this.field.translatable ? JSON.stringify(this.manual_value) : this.manual_value || '');
+            } else {
+                formData.append(this.field.attribute, this.linked_id);
+            }
         }
     }
 });
@@ -26822,7 +26827,6 @@ var render = function() {
     },
     [
       _c("template", { slot: "field" }, [
-        _vm._v("\n        " + _vm._s(_vm.field) + "\n\n        "),
         _c("label", { staticClass: "mb-2 block" }, [_vm._v("Type")]),
         _vm._v(" "),
         _c(
@@ -26858,45 +26862,95 @@ var render = function() {
               _vm._v("Manual URL")
             ]),
             _vm._v(" "),
-            _c("option", { attrs: { value: "linked" } }, [_vm._v("Linked")])
+            _c("option", { attrs: { value: "linked" } }, [
+              _vm._v("Linked " + _vm._s(_vm.field.linked_name))
+            ])
           ]
         ),
         _vm._v(" "),
         _c("label", { staticClass: "mb-2 mt-4 block" }, [_vm._v("Value")]),
         _vm._v(" "),
-        !_vm.field.translatable
-          ? _c("div", {}, [
-              _vm.type === "manual"
-                ? _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.value,
-                        expression: "value"
-                      }
-                    ],
-                    staticClass:
-                      "w-full form-control form-input form-input-bordered",
-                    class: _vm.errorClasses,
-                    attrs: {
-                      id: _vm.field.name,
-                      type: "text",
-                      placeholder: _vm.field.name
-                    },
-                    domProps: { value: _vm.value },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
+        _vm.type === "manual"
+          ? _c("div", [
+              !_vm.field.translatable
+                ? _c("div", [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.value,
+                          expression: "value"
                         }
-                        _vm.value = $event.target.value
+                      ],
+                      staticClass:
+                        "w-full form-control form-input form-input-bordered",
+                      class: _vm.errorClasses,
+                      attrs: {
+                        id: _vm.field.name,
+                        type: "text",
+                        placeholder: _vm.field.name
+                      },
+                      domProps: { value: _vm.value },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.value = $event.target.value
+                        }
                       }
-                    }
-                  })
+                    })
+                  ])
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.field.translatable
+                ? _c(
+                    "div",
+                    _vm._l(_vm.field.locales, function(language, code) {
+                      return _c("div", { staticClass: "flex items-center" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "mb-4 w-1/6 mt-4 block mr-3 font-bold text-sm"
+                          },
+                          [_vm._v(_vm._s(language))]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.manual_value[code],
+                              expression: "manual_value[code]"
+                            }
+                          ],
+                          staticClass:
+                            "w-full form-control form-input form-input-bordered",
+                          attrs: { type: "text" },
+                          domProps: { value: _vm.manual_value[code] },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.manual_value,
+                                code,
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ])
+                    }),
+                    0
+                  )
                 : _vm._e()
             ])
-          : _c("div", [_c("p", [_vm._v("This field is translatable.")])]),
+          : _vm._e(),
         _vm._v(" "),
         _vm.type === "linked"
           ? _c(
