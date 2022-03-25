@@ -11,6 +11,7 @@ class FlexibleUrl extends Field
     /** @var string */
     public $component = 'flexible-url-field';
 
+    protected string $linkableType;
     protected bool $isTranslatable = false;
     protected array $linked = [];
 
@@ -47,20 +48,19 @@ class FlexibleUrl extends Field
                 $value = json_decode($value);
             }
 
-            dd($type, $value);
-
-            /*
-            if ($isRegularUrl) {
-                // 1. Check if translatable: $this->isTranslatable($model)
-                $model->{$requestAttribute} = $data['value'];
-            } else {
-                // 1. The user has chosen a related model
-                $model->{$requestAttribute} = null;
-                // Use the newly migrated field to store the relationship
-                $model->linkable_type = $data['value']['type']; // TODO: get type from FlexibleUrl field instead?
-                $model->linkable_id = $data['value']['id'];
+            if ($type === 'linked') {
+                $model->linkable_type = $this->linkableType;
+                $model->linkable_id = $value;
+                return;
             }
-            */
+
+            if ($this->isTranslatable) {
+                $model->setTranslations($requestAttribute, $value);
+            } else {
+                $model->{$requestAttribute} = $value;
+            }
+
+            dd($model);
         }
     }
 
@@ -70,6 +70,8 @@ class FlexibleUrl extends Field
         array $columnsToQuery,
         callable $displayCallback = null
     ): self {
+        $this->linkableType = $class;
+
         $values = $class::query()
             ->get(array_merge(['id'], $columnsToQuery))
             ->map(function ($record) use ($displayCallback) {
