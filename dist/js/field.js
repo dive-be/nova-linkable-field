@@ -260,7 +260,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_vm._v(_vm._s(_vm.field.display_value))])
+  return _c("div", [_vm._v(_vm._s(_vm.field.displayValue))])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -360,9 +360,7 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "w-3/4 py-4 break-words" }, [
       _c("p", { staticClass: "text-90" }, [
-        _vm._v(
-          "\n            " + _vm._s(_vm.field.display_value) + "\n        "
-        )
+        _vm._v("\n            " + _vm._s(_vm.field.displayValue) + "\n        ")
       ])
     ])
   ])
@@ -474,13 +472,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({
     mixins: [__WEBPACK_IMPORTED_MODULE_0_laravel_nova__["FormField"], __WEBPACK_IMPORTED_MODULE_0_laravel_nova__["HandlesValidationErrors"]],
 
-    props: ['resourceName', 'resourceId', 'field', 'initial_type', 'initial_id'],
+    props: ['resourceName', 'resourceId', 'field'],
 
     data: function data() {
         return {
-            type: this.field.initial_type == null || this.field.initial_type === '' ? 'manual' : 'linked',
-            linked_id: this.field.initial_id,
-            manual_value: this.field.initial_manual_value
+            type: this.field.initialType,
+            linkedId: this.field.initialId,
+            manualValue: this.field.initialManualValue
         };
     },
 
@@ -489,9 +487,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         fill: function fill(formData) {
             formData.append(this.field.attribute + "-type", this.type);
             if (this.type === 'manual') {
-                formData.append(this.field.attribute, this.field.translatable ? JSON.stringify(this.manual_value) : this.manual_value || '');
+                formData.append(this.field.attribute, this.field.translatable ? JSON.stringify(this.manualValue) : this.manualValue || '');
             } else {
-                formData.append(this.field.attribute, this.linked_id);
+                formData.append(this.field.attribute, this.linkedId);
             }
         }
     }
@@ -26886,7 +26884,7 @@ var render = function() {
             ]),
             _vm._v(" "),
             _c("option", { attrs: { value: "linked" } }, [
-              _vm._v("Linked " + _vm._s(_vm.field.linked_name))
+              _vm._v("Linked " + _vm._s(_vm.field.linkedName))
             ])
           ]
         ),
@@ -26946,21 +26944,21 @@ var render = function() {
                             {
                               name: "model",
                               rawName: "v-model",
-                              value: _vm.manual_value[code],
-                              expression: "manual_value[code]"
+                              value: _vm.manualValue[code],
+                              expression: "manualValue[code]"
                             }
                           ],
                           staticClass:
                             "w-full form-control form-input form-input-bordered",
                           attrs: { type: "text" },
-                          domProps: { value: _vm.manual_value[code] },
+                          domProps: { value: _vm.manualValue[code] },
                           on: {
                             input: function($event) {
                               if ($event.target.composing) {
                                 return
                               }
                               _vm.$set(
-                                _vm.manual_value,
+                                _vm.manualValue,
                                 code,
                                 $event.target.value
                               )
@@ -26983,8 +26981,8 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.linked_id,
-                    expression: "linked_id"
+                    value: _vm.linkedId,
+                    expression: "linkedId"
                   }
                 ],
                 staticClass:
@@ -26999,13 +26997,13 @@ var render = function() {
                         var val = "_value" in o ? o._value : o.value
                         return val
                       })
-                    _vm.linked_id = $event.target.multiple
+                    _vm.linkedId = $event.target.multiple
                       ? $$selectedVal
                       : $$selectedVal[0]
                   }
                 }
               },
-              _vm._l(_vm.field.linked_values, function(value, id) {
+              _vm._l(_vm.field.linkedValues, function(value, id) {
                 return _c("option", { domProps: { value: id } }, [
                   _vm._v(
                     "\n                " + _vm._s(value) + "\n            "

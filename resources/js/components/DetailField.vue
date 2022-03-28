@@ -5,7 +5,7 @@
         </div>
         <div class="w-3/4 py-4 break-words">
             <p class="text-90">
-                {{ field.display_value }}
+                {{ field.displayValue }}
             </p>
         </div>
     </div>

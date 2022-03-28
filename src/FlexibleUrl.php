@@ -23,10 +23,10 @@ class FlexibleUrl extends Field
             $this->linked = [
                 'locales' => config('nova-translatable.locales'),
                 'translatable' => $this->isTranslatable,
-                'initial_type' => $resource->linkable_type,
-                'initial_id' => $resource->linkable_id,
-                'initial_manual_value' => $this->getValue($resource, $attribute),
-                'display_value' => $this->getDisplayValue($resource, $attribute)
+                'initialType' => empty($resource->linkable_type) ? 'manual' : 'linked',
+                'initialId' => $resource->linkable_id,
+                'initialManualValue' => $this->getValue($resource, $attribute),
+                'displayValue' => $this->getDisplayValue($resource, $attribute)
             ] + $this->linked;
 
             $this->withMeta($this->linked);
@@ -64,8 +64,8 @@ class FlexibleUrl extends Field
             });
 
         $this->linked = [
-            'linked_name' => $readableName,
-            'linked_values' => $values,
+            'linkedName' => $readableName,
+            'linkedValues' => $values,
         ];
 
         return $this;
@@ -76,8 +76,8 @@ class FlexibleUrl extends Field
         $linkableId = $resource->getAttribute('linkable_id');
 
         if ($linkableId != 0) {
-            $name = $this->linked['linked_name'];
-            $displayValue = $this->linked['linked_values'][$linkableId];
+            $name = $this->linked['linkedName'];
+            $displayValue = $this->linked['linkedValues'][$linkableId];
             return "Linked {$name}: {$displayValue}";
         }
 

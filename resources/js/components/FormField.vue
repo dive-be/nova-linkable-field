@@ -4,7 +4,7 @@
             <label class="mb-2 block">Type</label>
             <select v-model="type" class="w-full form-control form-input form-input-bordered">
                 <option value="manual">Manual URL</option>
-                <option value="linked">Linked {{ field.linked_name }}</option>
+                <option value="linked">Linked {{ field.linkedName }}</option>
             </select>
             <label class="mb-2 mt-4 block">Value</label>
             <div v-if="type === 'manual'">
@@ -21,12 +21,12 @@
                 <div v-if="field.translatable">
                     <div v-for="(language, code) in field.locales" class="flex items-center">
                         <label class="mb-4 w-1/6 mt-4 block mr-3 font-bold text-sm">{{ language }}</label>
-                        <input type="text" v-model="manual_value[code]" class="w-full form-control form-input form-input-bordered" />
+                        <input type="text" v-model="manualValue[code]" class="w-full form-control form-input form-input-bordered" />
                     </div>
                 </div>
             </div>
-            <select v-if="type === 'linked'" class="w-full form-control form-input form-input-bordered" v-model="linked_id">
-                <option v-for="(value, id) in field.linked_values" :value="id">
+            <select v-if="type === 'linked'" class="w-full form-control form-input form-input-bordered" v-model="linkedId">
+                <option v-for="(value, id) in field.linkedValues" :value="id">
                     {{ value }}
                 </option>
             </select>
@@ -41,15 +41,14 @@ export default {
     mixins: [FormField, HandlesValidationErrors],
 
     props: [
-        'resourceName', 'resourceId', 'field',
-        'initial_type', 'initial_id'
+        'resourceName', 'resourceId', 'field'
     ],
 
     data() {
         return {
-            type: (this.field.initial_type == null || this.field.initial_type === '') ? 'manual' : 'linked',
-            linked_id: this.field.initial_id,
-            manual_value: this.field.initial_manual_value
+            type: this.field.initialType,
+            linkedId: this.field.initialId,
+            manualValue: this.field.initialManualValue
         }
     },
 
@@ -58,11 +57,11 @@ export default {
             formData.append(this.field.attribute + "-type", this.type);
             if (this.type === 'manual') {
                 formData.append(this.field.attribute, this.field.translatable
-                    ? JSON.stringify(this.manual_value)
-                    : this.manual_value || ''
+                    ? JSON.stringify(this.manualValue)
+                    : this.manualValue || ''
                 );
             } else {
-                formData.append(this.field.attribute, this.linked_id)
+                formData.append(this.field.attribute, this.linkedId)
             }
         },
     },
