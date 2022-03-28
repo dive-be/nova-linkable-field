@@ -249,7 +249,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['resourceName', 'field']
+    props: ['field']
 });
 
 /***/ }),
@@ -260,7 +260,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("span", [_vm._v(_vm._s(_vm.field.value))])
+  return _c("div", [_vm._v(_vm._s(_vm.field.display_value))])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -329,6 +329,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['resource', 'resourceName', 'resourceId', 'field']
@@ -342,7 +351,21 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("panel-item", { attrs: { field: _vm.field } })
+  return _c("div", { staticClass: "flex border-b border-40 -mx-6 px-6" }, [
+    _c("div", { staticClass: "w-1/4 py-4" }, [
+      _c("h4", { staticClass: "font-normal text-80" }, [
+        _vm._v(_vm._s(_vm.field.name))
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "w-3/4 py-4 break-words" }, [
+      _c("p", { staticClass: "text-90" }, [
+        _vm._v(
+          "\n            " + _vm._s(_vm.field.display_value) + "\n        "
+        )
+      ])
+    ])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -26982,12 +27005,10 @@ var render = function() {
                   }
                 }
               },
-              _vm._l(_vm.field.linked_values, function(value) {
-                return _c("option", { domProps: { value: value.id } }, [
+              _vm._l(_vm.field.linked_values, function(value, id) {
+                return _c("option", { domProps: { value: id } }, [
                   _vm._v(
-                    "\n                " +
-                      _vm._s(value.display) +
-                      "\n            "
+                    "\n                " + _vm._s(value) + "\n            "
                   )
                 ])
               }),

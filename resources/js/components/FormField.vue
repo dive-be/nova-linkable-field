@@ -26,8 +26,8 @@
                 </div>
             </div>
             <select v-if="type === 'linked'" class="w-full form-control form-input form-input-bordered" v-model="linked_id">
-                <option v-for="value in field.linked_values" :value="value.id">
-                    {{ value.display }}
+                <option v-for="(value, id) in field.linked_values" :value="id">
+                    {{ value }}
                 </option>
             </select>
         </template>

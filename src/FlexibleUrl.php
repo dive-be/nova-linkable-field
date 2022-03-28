@@ -25,7 +25,8 @@ class FlexibleUrl extends Field
                 'translatable' => $this->isTranslatable,
                 'initial_type' => $resource->linkable_type,
                 'initial_id' => $resource->linkable_id,
-                'initial_manual_value' => $this->getValue($resource, $attribute)
+                'initial_manual_value' => $this->getValue($resource, $attribute),
+                'display_value' => $this->getDisplayValue($resource, $attribute)
             ] + $this->linked;
 
             $this->withMeta($this->linked);
@@ -58,19 +59,35 @@ class FlexibleUrl extends Field
 
         $values = $class::query()
             ->get(array_merge(['id'], $columnsToQuery))
-            ->map(function ($record) use ($displayCallback) {
-                return [
-                    'id' => $record->id,
-                    'display' => $displayCallback($record),
-                ];
+            ->flatMap(function ($record) use ($displayCallback) {
+                return [$record->id => $displayCallback($record)];
             });
 
         $this->linked = [
             'linked_name' => $readableName,
-            'linked_values' => $values
+            'linked_values' => $values,
         ];
 
         return $this;
+    }
+
+    private function getDisplayValue($resource, $attribute): string
+    {
+        $linkableId = $resource->getAttribute('linkable_id');
+
+        if ($linkableId != 0) {
+            $name = $this->linked['linked_name'];
+            $displayValue = $this->linked['linked_values'][$linkableId];
+            return "Linked {$name}: {$displayValue}";
+        }
+
+        $url = $resource->getAttribute($attribute);
+
+        if (empty($url)) {
+            $url = "<empty>";
+        }
+
+        return "Manual URL: {$url}";
     }
 
     private function getValue($resource, $attribute): array|string
@@ -102,7 +119,6 @@ class FlexibleUrl extends Field
 
     private function setManualUrl($model, $requestAttribute, $value)
     {
-        $model->{$requestAttribute} = null;
         $model->linkable_type = $this->linkableType;
         $model->linkable_id = $value;
     }

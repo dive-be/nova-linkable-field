@@ -1,9 +1,9 @@
 <template>
-    <span>{{ field.value }}</span>
+    <div>{{ field.display_value }}</div>
 </template>
 
 <script>
 export default {
-    props: ['resourceName', 'field'],
+    props: ['field'],
 }
 </script>
