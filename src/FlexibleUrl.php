@@ -39,24 +39,12 @@ class FlexibleUrl extends Field
         $attribute
     ) {
         if ($request->exists($requestAttribute)) {
-            $value = $request[$requestAttribute];
-            $type = $request[$requestAttribute . "-type"];
+            $args = [$model, $requestAttribute, $request[$requestAttribute]];
 
-            if ($this->isTranslatable) {
-                $value = json_decode($value, true);
-            }
-
-            if ($type === 'linked') {
-                $model->linkable_type = $this->linkableType;
-                $model->linkable_id = $value;
-                return;
-            }
-
-            if ($this->isTranslatable) {
-                $model->setTranslations($requestAttribute, $value);
-            } else {
-                $model->{$requestAttribute} = $value;
-            }
+            match ($request["$requestAttribute-type"]) {
+                'linked' => $this->setManualUrl(...$args),
+                'manual' => $this->setLinkedId(...$args)
+            };
         }
     }
 
@@ -110,5 +98,24 @@ class FlexibleUrl extends Field
             "Spatie\Translatable\HasTranslations",
             class_uses($model)
         );
+    }
+
+    private function setManualUrl($model, $requestAttribute, $value)
+    {
+        $model->{$requestAttribute} = null;
+        $model->linkable_type = $this->linkableType;
+        $model->linkable_id = $value;
+    }
+
+    private function setLinkedId($model, $requestAttribute, $value)
+    {
+        $model->linkable_id = 0;
+        $model->linkable_type = '';
+
+        if ($this->isTranslatable) {
+            $model->setTranslations($requestAttribute, json_decode($value, true));
+        } else {
+            $model->{$requestAttribute} = $value;
+        }
     }
 }

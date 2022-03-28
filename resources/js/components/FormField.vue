@@ -25,8 +25,8 @@
                     </div>
                 </div>
             </div>
-            <select v-if="type === 'linked'" class="w-full form-control form-input form-input-bordered">
-                <option v-for="value in field.linked_values" v-model="value.id">
+            <select v-if="type === 'linked'" class="w-full form-control form-input form-input-bordered" v-model="linked_id">
+                <option v-for="value in field.linked_values" :value="value.id">
                     {{ value.display }}
                 </option>
             </select>
@@ -47,8 +47,8 @@ export default {
 
     data() {
         return {
-            type: (this.initial_type == null || this.initial_type === '') ? 'manual' : 'linked',
-            linked_id: this.initial_id,
+            type: (this.field.initial_type == null || this.field.initial_type === '') ? 'manual' : 'linked',
+            linked_id: this.field.initial_id,
             manual_value: this.field.initial_manual_value
         }
     },

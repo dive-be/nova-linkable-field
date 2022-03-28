@@ -455,8 +455,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     data: function data() {
         return {
-            type: this.initial_type == null || this.initial_type === '' ? 'manual' : 'linked',
-            linked_id: this.initial_id,
+            type: this.field.initial_type == null || this.field.initial_type === '' ? 'manual' : 'linked',
+            linked_id: this.field.initial_id,
             manual_value: this.field.initial_manual_value
         };
     },
@@ -26956,29 +26956,40 @@ var render = function() {
           ? _c(
               "select",
               {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.linked_id,
+                    expression: "linked_id"
+                  }
+                ],
                 staticClass:
-                  "w-full form-control form-input form-input-bordered"
+                  "w-full form-control form-input form-input-bordered",
+                on: {
+                  change: function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.linked_id = $event.target.multiple
+                      ? $$selectedVal
+                      : $$selectedVal[0]
+                  }
+                }
               },
               _vm._l(_vm.field.linked_values, function(value) {
-                return _c(
-                  "option",
-                  {
-                    model: {
-                      value: value.id,
-                      callback: function($$v) {
-                        _vm.$set(value, "id", $$v)
-                      },
-                      expression: "value.id"
-                    }
-                  },
-                  [
-                    _vm._v(
-                      "\n                " +
-                        _vm._s(value.display) +
-                        "\n            "
-                    )
-                  ]
-                )
+                return _c("option", { domProps: { value: value.id } }, [
+                  _vm._v(
+                    "\n                " +
+                      _vm._s(value.display) +
+                      "\n            "
+                  )
+                ])
               }),
               0
             )
