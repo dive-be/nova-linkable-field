@@ -22,6 +22,18 @@ You must make sure to add a `linkable` morph to the table of the model you'd lik
 $table->morphs('linkable');
 ```
 
+In the resource you can specify which URL you would like to link.  It is currently only possible to attach one flexible URL per model due to this relationship, but this may change until v1.0 is released.
+
+```php
+FlexibleUrl::make('URL', 'url')
+    ->withLinkable(
+        Page::class, // related the model that is linked
+        'CMS Page', // how the model is identified to the user
+        ['title'], // columns queried for use in the callback (next parameter)
+        fn ($page) => $page->getAttribute('title') // callback that resolves the display value of the related model
+    ),
+```
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.

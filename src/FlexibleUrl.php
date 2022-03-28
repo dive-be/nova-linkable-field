@@ -11,25 +11,25 @@ class FlexibleUrl extends Field
     /** @var string */
     public $component = 'flexible-url-field';
 
-    protected string $linkableType;
+    protected array $extraMetable = [];
     protected bool $isTranslatable = false;
-    protected array $linked = [];
+    protected string $linkableType;
 
     public function __construct(string $name, string $attribute = null, callable $resolveCallback = null)
     {
         parent::__construct($name, $attribute, function ($value, $resource) use ($attribute) {
             $this->isTranslatable = $this->isTranslatable($resource);
 
-            $this->linked = [
+            $this->extraMetable = [
                 'locales' => config('nova-translatable.locales'),
                 'translatable' => $this->isTranslatable,
                 'initialType' => empty($resource->linkable_type) ? 'manual' : 'linked',
                 'initialId' => $resource->linkable_id,
                 'initialManualValue' => $this->getValue($resource, $attribute),
                 'displayValue' => $this->getDisplayValue($resource, $attribute)
-            ] + $this->linked;
+            ] + $this->extraMetable;
 
-            $this->withMeta($this->linked);
+            $this->withMeta($this->extraMetable);
         });
     }
 
@@ -40,11 +40,16 @@ class FlexibleUrl extends Field
         $attribute
     ) {
         if ($request->exists($requestAttribute)) {
-            $args = [$model, $requestAttribute, $request[$requestAttribute]];
-
             match ($request["$requestAttribute-type"]) {
-                'linked' => $this->setManualUrl(...$args),
-                'manual' => $this->setLinkedId(...$args)
+                'linked' => $this->setManualUrl(
+                    model: $model,
+                    value: $request[$requestAttribute]
+                ),
+                'manual' => $this->setLinkedId(
+                    model: $model,
+                    requestAttribute: $requestAttribute,
+                    value: $request[$requestAttribute]
+                )
             };
         }
     }
@@ -56,16 +61,13 @@ class FlexibleUrl extends Field
         callable $displayCallback = null
     ): self {
         $this->linkableType = $class;
-
-        $values = $class::query()
-            ->get(array_merge(['id'], $columnsToQuery))
-            ->flatMap(function ($record) use ($displayCallback) {
-                return [$record->id => $displayCallback($record)];
-            });
-
-        $this->linked = [
+        $this->extraMetable = [
             'linkedName' => $readableName,
-            'linkedValues' => $values,
+            'linkedValues' => $class::query()
+                ->get(array_merge(['id'], $columnsToQuery))
+                ->flatMap(function ($record) use ($displayCallback) {
+                    return [$record->id => $displayCallback($record)];
+                }),
         ];
 
         return $this;
@@ -76,8 +78,8 @@ class FlexibleUrl extends Field
         $linkableId = $resource->getAttribute('linkable_id');
 
         if ($linkableId != 0) {
-            $name = $this->linked['linkedName'];
-            $displayValue = $this->linked['linkedValues'][$linkableId];
+            $name = $this->extraMetable['linkedName'];
+            $displayValue = $this->extraMetable['linkedValues'][$linkableId];
             return "Linked {$name}: {$displayValue}";
         }
 
@@ -117,7 +119,7 @@ class FlexibleUrl extends Field
         );
     }
 
-    private function setManualUrl($model, $requestAttribute, $value)
+    private function setManualUrl($model, $value)
     {
         $model->linkable_type = $this->linkableType;
         $model->linkable_id = $value;
