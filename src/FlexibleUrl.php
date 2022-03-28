@@ -25,9 +25,7 @@ class FlexibleUrl extends Field
                 'translatable' => $this->isTranslatable,
                 'initial_type' => $resource->linkable_type,
                 'initial_id' => $resource->linkable_id,
-                'initial_manual_value' => $this->isTranslatable
-                    ? $resource->getTranslations($attribute)
-                    : $resource->getAttribute($attribute)
+                'initial_manual_value' => $this->getValue($resource, $attribute)
             ] + $this->linked;
 
             $this->withMeta($this->linked);
@@ -45,7 +43,7 @@ class FlexibleUrl extends Field
             $type = $request[$requestAttribute . "-type"];
 
             if ($this->isTranslatable) {
-                $value = json_decode($value);
+                $value = json_decode($value, true);
             }
 
             if ($type === 'linked') {
@@ -59,8 +57,6 @@ class FlexibleUrl extends Field
             } else {
                 $model->{$requestAttribute} = $value;
             }
-
-            dd($model);
         }
     }
 
@@ -87,6 +83,25 @@ class FlexibleUrl extends Field
         ];
 
         return $this;
+    }
+
+    private function getValue($resource, $attribute): array|string
+    {
+        if (!$this->isTranslatable) {
+            return $resource->getAttribute($attribute);
+        }
+
+        $translations = $resource->getTranslations($attribute);
+
+        collect(config('nova-translatable.locales'))
+            ->keys()
+            ->each(function ($key) use (&$translations) {
+                if (!array_key_exists($key, $translations)) {
+                    $translations[$key] = "";
+                }
+            });
+
+        return $translations;
     }
 
     private function isTranslatable(Model|string $model): bool
