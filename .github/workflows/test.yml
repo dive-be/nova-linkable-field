@@ -6,8 +6,11 @@ jobs:
     container:
       image: diveinteractive/php81-alpine:latest
     steps:
-      - run: ls /
       - name: List contents of directory
-      - run:  curl --show-error --silent "https://getcomposer.org/installer" | php
-      - run: php composer.phar install --no-interaction --optimize-autoloader
+        run: |
+          ls /
+
       - name: Install dependencies
+        run: |
+          curl --show-error --silent "https://getcomposer.org/installer" | php
+          php composer.phar install --no-interaction --optimize-autoloader
