@@ -26,7 +26,7 @@ In the resource you can specify which URL you would like to link.  It is current
 ```php
 FlexibleUrl::make('URL', 'url')
     ->withLinkable(
-        Page::class, // related the model that is linked
+        Page::class, // the related model that is linked
         'CMS Page', // how the model is identified to the user
         ['title'], // columns queried for use in the callback (next parameter)
         fn ($page) => $page->getAttribute('title') // callback that resolves the display value of the related model

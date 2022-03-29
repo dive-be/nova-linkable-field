@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Dive\FlexibleUrlField;
+namespace Dive\FlexibleUrlField\Nova\Fields;
 
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Nova\Fields\Field;
@@ -12,13 +12,19 @@ class FlexibleUrl extends Field
     public $component = 'flexible-url-field';
 
     protected array $extraMetable = [];
+
     protected bool $isTranslatable = false;
+
     protected string $linkableType;
+    protected array $linkableQuery = [];
 
     public function __construct(string $name, string $attribute = null, callable $resolveCallback = null)
     {
         parent::__construct($name, $attribute, function ($value, $resource) use ($attribute) {
             $this->isTranslatable = $this->isTranslatable($resource);
+
+            $columnsToQuery = $this->linkableQuery['columns'];
+            $displayCallback = $this->linkableQuery['callback'];
 
             $this->extraMetable = [
                 'locales' => config('nova-translatable.locales'),
@@ -26,7 +32,7 @@ class FlexibleUrl extends Field
                 'initialType' => empty($resource->linkable_type) ? 'manual' : 'linked',
                 'initialId' => $resource->linkable_id,
                 'initialManualValue' => $this->getValue($resource, $attribute),
-                'displayValue' => $this->getDisplayValue($resource, $attribute)
+                'displayValue' => $this->getDisplayValue($resource, $attribute),
             ] + $this->extraMetable;
 
             $this->withMeta($this->extraMetable);
@@ -61,13 +67,19 @@ class FlexibleUrl extends Field
         callable $displayCallback = null
     ): self {
         $this->linkableType = $class;
+
+        $this->linkableQuery = [
+            'columns' => $columnsToQuery,
+            'callback' => $displayCallback
+        ];
+
         $this->extraMetable = [
             'linkedName' => $readableName,
-            'linkedValues' => $class::query()
+            'linkedValues' => $this->linkableType::query()
                 ->get(array_merge(['id'], $columnsToQuery))
                 ->flatMap(function ($record) use ($displayCallback) {
                     return [$record->id => $displayCallback($record)];
-                }),
+                })
         ];
 
         return $this;
@@ -75,21 +87,27 @@ class FlexibleUrl extends Field
 
     private function getDisplayValue($resource, $attribute): string
     {
-        $linkableId = $resource->getAttribute('linkable_id');
+        $related = \DB::table('url_linkables')
+            ->where('source_type', '=', get_class($resource))
+            ->where('source_id', '=', $resource->id)
+            ->where('target_type', $this->linkableType)
+            ->select('url_linkables.target_id')
+            ->get()
+            ->first();
 
-        if ($linkableId != 0) {
-            $name = $this->extraMetable['linkedName'];
-            $displayValue = $this->extraMetable['linkedValues'][$linkableId];
-            return "Linked {$name}: {$displayValue}";
+        if ($related == null) {
+            $url = $resource->getAttribute($attribute);
+
+            if (empty($url)) {
+                $url = "<empty>";
+            }
+
+            return "Manual URL: {$url}";
         }
 
-        $url = $resource->getAttribute($attribute);
-
-        if (empty($url)) {
-            $url = "<empty>";
-        }
-
-        return "Manual URL: {$url}";
+        $name = $this->extraMetable['linkedName'];
+        $displayValue = $this->extraMetable['linkedValues'][$related->target_id];
+        return "Linked {$name}: {$displayValue}";
     }
 
     private function getValue($resource, $attribute): array|string
