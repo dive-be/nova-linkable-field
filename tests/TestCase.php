@@ -1,6 +1,6 @@
 <?php
 
-namespace Dive\FlexibleField\Tests;
+namespace Tests;
 
 use Dive\FlexibleUrlField\FieldServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
