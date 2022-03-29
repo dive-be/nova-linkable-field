@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Dive\FlexibleUrlField;
+namespace Dive\LinkableField;
 
 use Illuminate\Support\ServiceProvider;
 use Laravel\Nova\Events\ServingNova;
@@ -17,11 +17,6 @@ class FieldServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__ . '/../database/migrations/' => database_path('migrations'),
-        ], 'flexible-url-migrations');
-    }
-
-    public function register()
-    {
-        //
+        ], 'linkable-migrations');
     }
 }

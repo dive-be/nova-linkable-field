@@ -1,9 +1,10 @@
 {
-    "name": "dive-be/nova-flexible-url-field",
-    "description": "A Laravel Nova field.",
+    "name": "dive-be/nova-linkable-field",
+    "description": "This package allows you to provide a field that can optionally link to a different model as an alternative to a manual attribute value.",
     "keywords": [
         "laravel",
-        "nova"
+        "nova",
+        "model"
     ],
     "license": "MIT",
     "require": {
@@ -16,7 +17,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Dive\\FlexibleUrlField\\": "src/"
+            "Dive\\LinkableField\\": "src/"
         }
     },
     "autoload-dev": {
@@ -27,7 +28,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Dive\\FlexibleUrlField\\FieldServiceProvider"
+                "Dive\\LinkableField\\FieldServiceProvider"
             ]
         }
     },

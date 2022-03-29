@@ -1,6 +1,6 @@
 <?php
 
-namespace Dive\FlexibleUrlField\Models;
+namespace Dive\LinkableField\Models;
 
 interface HasUrlField
 {

@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace Dive\FlexibleUrlField\Nova\Fields;
+namespace Dive\LinkableField\Nova\Fields;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class FlexibleUrl extends Field
+class LinkableField extends Field
 {
     /** @var string */
     public $component = 'flexible-url-field';

@@ -1,24 +1,33 @@
-# A Nova field to link URLs (manually or to models)
+# Nova Linkable Field
 
-This package allows you to provide a field that can **link to a model instance (of your choosing)** or to **a manual url**.
+This package allows you to provide a field that can **optionally link to a different model as an alternative to a manual attribute value**.
+
+## Use Case
+
+For example: you have a `MenuItem` model in your application.
+
+Maybe you want this `MenuItem` to link to a particular model (a `Page` model, perhaps?), which has its own URL. You can do that, or provide a manual URL alternative (if you do not want to link a model).
+
+This makes it very obvious to users in Nova that the field in question is *either* linked or a fixed, manual value.
 
 ## Requirements
 
+- `laravel/framework: ^9.0`
 - `laravel/nova: ^3.0`
 
 ## Installation
 
-You can install the package via composer:
+You can install the package via Composer:
 
 ```bash
-composer require dive-be/nova-flexible-url-field
+composer require dive-be/nova-linkable-field
 ```
 
 ### Usage
 
 You must run the included migrations:
 
-    php artisan vendor:publish --tag=flexible-url-migrations
+    php artisan vendor:publish --tag=linkable-migrations
     php artisan migrate
 
 In the resource you can specify which URL you would like to link.  It is currently only possible to attach one flexible URL per model due to this relationship, but this may change until v1.0 is released.
