@@ -8,9 +8,10 @@ jobs:
     steps:
       - name: List contents of directory
         run: |
-          ls /
+          ls /github/workspace
 
       - name: Install dependencies
         run: |
+          cd /github/workspace
           curl --show-error --silent "https://getcomposer.org/installer" | php
           php composer.phar install --no-interaction --optimize-autoloader
