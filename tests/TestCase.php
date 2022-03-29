@@ -20,7 +20,8 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app)
     {
         return [
-            FieldServiceProvider::class,
+            // TODO: What to do about this? We cannot install Nova (not public).
+            // FieldServiceProvider::class,
         ];
     }
 
