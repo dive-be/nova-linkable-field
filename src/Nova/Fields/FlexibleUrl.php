@@ -3,6 +3,7 @@
 namespace Dive\FlexibleUrlField\Nova\Fields;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -11,26 +12,35 @@ class FlexibleUrl extends Field
     /** @var string */
     public $component = 'flexible-url-field';
 
+    /** @var array Additional metable information exposed to the JS. */
     protected array $extraMetable = [];
 
+    /** @var bool */
     protected bool $isTranslatable = false;
 
+    /** @var string The resolved class of the type we wish to link. */
     protected string $linkableType;
-    protected array $linkableQuery = [];
+
+    /** @var int|null The resolved ID of the type that was linked to the resource. Null if not linked. */
+    protected ?int $linkableId = null;
+
+    /** @var Builder The query builder that is used to determine the linked ID. */
+    protected Builder $linkableQueryBuilder;
 
     public function __construct(string $name, string $attribute = null, callable $resolveCallback = null)
     {
         parent::__construct($name, $attribute, function ($value, $resource) use ($attribute) {
             $this->isTranslatable = $this->isTranslatable($resource);
 
-            $columnsToQuery = $this->linkableQuery['columns'];
-            $displayCallback = $this->linkableQuery['callback'];
+            $this->linkableQueryBuilder = $this->buildLinkableQuery($resource);
+
+            $this->linkableId = $this->linkableQueryBuilder->first()?->target_id;
 
             $this->extraMetable = [
                 'locales' => config('nova-translatable.locales'),
                 'translatable' => $this->isTranslatable,
-                'initialType' => empty($resource->linkable_type) ? 'manual' : 'linked',
-                'initialId' => $resource->linkable_id,
+                'initialType' => $this->linkableId === null ? 'manual' : 'linked',
+                'initialId' => $this->linkableId,
                 'initialManualValue' => $this->getValue($resource, $attribute),
                 'displayValue' => $this->getDisplayValue($resource, $attribute),
             ] + $this->extraMetable;
@@ -47,11 +57,11 @@ class FlexibleUrl extends Field
     ) {
         if ($request->exists($requestAttribute)) {
             match ($request["$requestAttribute-type"]) {
-                'linked' => $this->setManualUrl(
+                'linked' => $this->setLinkedId(
                     model: $model,
-                    value: $request[$requestAttribute]
+                    value: (int) $request[$requestAttribute]
                 ),
-                'manual' => $this->setLinkedId(
+                'manual' => $this->setManualUrl(
                     model: $model,
                     requestAttribute: $requestAttribute,
                     value: $request[$requestAttribute]
@@ -68,11 +78,6 @@ class FlexibleUrl extends Field
     ): self {
         $this->linkableType = $class;
 
-        $this->linkableQuery = [
-            'columns' => $columnsToQuery,
-            'callback' => $displayCallback
-        ];
-
         $this->extraMetable = [
             'linkedName' => $readableName,
             'linkedValues' => $this->linkableType::query()
@@ -85,17 +90,18 @@ class FlexibleUrl extends Field
         return $this;
     }
 
-    private function getDisplayValue($resource, $attribute): string
+    private function buildLinkableQuery(Model $model): Builder
     {
-        $related = \DB::table('url_linkables')
-            ->where('source_type', '=', get_class($resource))
-            ->where('source_id', '=', $resource->id)
+        return \DB::table('url_linkables')
+            ->where('source_type', '=', get_class($model))
+            ->where('source_id', '=', $model->getKey())
             ->where('target_type', $this->linkableType)
-            ->select('url_linkables.target_id')
-            ->get()
-            ->first();
+            ->select('url_linkables.target_id');
+    }
 
-        if ($related == null) {
+    private function getDisplayValue(Model $resource, $attribute): string
+    {
+        if ($this->linkableId == null) {
             $url = $resource->getAttribute($attribute);
 
             if (empty($url)) {
@@ -106,7 +112,7 @@ class FlexibleUrl extends Field
         }
 
         $name = $this->extraMetable['linkedName'];
-        $displayValue = $this->extraMetable['linkedValues'][$related->target_id];
+        $displayValue = $this->extraMetable['linkedValues'][$this->linkableId];
         return "Linked {$name}: {$displayValue}";
     }
 
@@ -137,16 +143,22 @@ class FlexibleUrl extends Field
         );
     }
 
-    private function setManualUrl($model, $value)
+    private function setLinkedId($model, int $value)
     {
-        $model->linkable_type = $this->linkableType;
-        $model->linkable_id = $value;
+        \DB::table('url_linkables')->updateOrInsert([
+            'source_type' => get_class($model),
+            'source_id' => $model->getKey(),
+        ], [
+            'source_type' => get_class($model),
+            'source_id' => $model->getKey(),
+            'target_type' => $this->linkableType,
+            'target_id' => $value
+        ]);
     }
 
-    private function setLinkedId($model, $requestAttribute, $value)
+    private function setManualUrl($model, $requestAttribute, $value)
     {
-        $model->linkable_id = 0;
-        $model->linkable_type = '';
+        $this->linkableQueryBuilder->delete();
 
         if ($this->isTranslatable) {
             $model->setTranslations($requestAttribute, json_decode($value, true));
