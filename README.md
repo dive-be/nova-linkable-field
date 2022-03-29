@@ -23,17 +23,19 @@ You can install the package via Composer:
 composer require dive-be/nova-linkable-field
 ```
 
-### Usage
+## Usage
+
+### Setting up the resource
 
 You must run the included migrations:
 
     php artisan vendor:publish --tag=linkable-migrations
     php artisan migrate
 
-In the resource you can specify which URL you would like to link.  It is currently only possible to attach one flexible URL per model due to this relationship, but this may change until v1.0 is released.
+In the resource, you can choose which field you would like to use a linkable field.
 
 ```php
-FlexibleUrl::make('URL', 'url')
+LinkableField::make('URL', 'url')
     ->withLinkable(
         Page::class, // the related model that is linked
         'CMS Page', // how the model is identified to the user
@@ -41,6 +43,18 @@ FlexibleUrl::make('URL', 'url')
         fn ($page) => $page->getAttribute('title') // callback that resolves the display value of the related model
     ),
 ```
+
+### Setting up the model
+
+In order to access the value via the model (in views, etc.) it is recommended to add the `HasLinkable` trait to your model.
+
+This allows you to do:
+
+```php
+// whether a model or a manual value, the correct URL will be returned`
+$url = $menuItem->getLinkable('url') 
+```
+Please note that the model you're linking to should have an accessor or an attribute that matches the field (in this case, `url`).
 
 ## Changelog
 

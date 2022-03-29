@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Dive\FlexibleUrlField\FieldServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -19,17 +18,14 @@ class TestCase extends Orchestra
 
     protected function getPackageProviders($app)
     {
-        return [
-            // TODO: What to do about this? We cannot install Nova (not public).
-            // FieldServiceProvider::class,
-        ];
+        return [];
     }
 
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
 
-        $migration = include __DIR__.'/../database/migrations/2022_03_29_105312_create_url_linkable_table.php';
+        $migration = include __DIR__.'/../database/migrations/2022_03_29_105312_create_model_linkables_table.php';
         $migration->up();
     }
 }

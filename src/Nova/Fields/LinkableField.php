@@ -92,11 +92,11 @@ class LinkableField extends Field
 
     private function buildLinkableQuery(Model $model): Builder
     {
-        return \DB::table('url_linkables')
+        return \DB::table('model_linkables')
             ->where('source_type', '=', get_class($model))
             ->where('source_id', '=', $model->getKey())
             ->where('target_type', $this->linkableType)
-            ->select('url_linkables.target_id');
+            ->select('dive_model_linkables.target_id');
     }
 
     private function getDisplayValue(Model $resource, $attribute): string
