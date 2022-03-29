@@ -14,6 +14,10 @@ class FieldServiceProvider extends ServiceProvider
             Nova::script('flexible-url-field', __DIR__ . '/../dist/js/field.js');
             Nova::style('flexible-url-field', __DIR__ . '/../dist/css/field.css');
         });
+
+        $this->publishes([
+            __DIR__ . '/../database/migrations/' => database_path('migrations'),
+        ], 'flexible-url-migrations');
     }
 
     public function register()

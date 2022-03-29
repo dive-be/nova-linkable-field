@@ -16,11 +16,10 @@ composer require dive-be/nova-flexible-url-field
 
 ### Usage
 
-You must make sure to add a `linkable` morph to the table of the model you'd like to make linkable. You can do this via a migration.
+You must run the included migrations:
 
-```php
-$table->morphs('linkable');
-```
+    php artisan vendor:publish --tag=flexible-url-migrations
+    php artisan migrate
 
 In the resource you can specify which URL you would like to link.  It is currently only possible to attach one flexible URL per model due to this relationship, but this may change until v1.0 is released.
 

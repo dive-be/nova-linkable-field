@@ -1,0 +1,13 @@
+name: test
+on: [push]
+jobs:
+  my_job:
+    runs-on: ubuntu-latest
+    container:
+      image: diveinteractive/php81-alpine:latest
+    steps:
+      - run: ls /
+      - name: List contents of directory
+      - run:  curl --show-error --silent "https://getcomposer.org/installer" | php
+      - run: php composer.phar install --no-interaction --optimize-autoloader
+      - name: Install dependencies
