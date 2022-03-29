@@ -2,7 +2,7 @@ name: run-tests
 
 on:
   push:
-    branches: [main, refactor]
+    branches: [main, feature/refactor]
   pull_request:
     branches: [main]
 
