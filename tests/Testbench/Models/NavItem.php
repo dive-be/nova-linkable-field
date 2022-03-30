@@ -2,7 +2,7 @@
 
 namespace Tests\Testbench\Models;
 
-use Dive\LinkableField\HasLinkableRelationship;
+use Dive\LinkableField\Models\HasLinkableRelationship;
 use Illuminate\Database\Eloquent\Model;
 
 class NavItem extends Model

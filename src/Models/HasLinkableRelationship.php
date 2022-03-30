@@ -1,20 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Dive\LinkableField;
-
-use Illuminate\Database\Eloquent\Relations\MorphOneOrMany;
+namespace Dive\LinkableField\Models;
 
 trait HasLinkableRelationship
 {
-    protected array $linkables = [];
-
     public function getLinkable(string $attribute)
     {
-
-    }
-
-    public function linkables(): MorphOneOrMany
-    {
-
+        // TODO: If we do a query here, we'll need to perform a query every time we request this field.
     }
 }

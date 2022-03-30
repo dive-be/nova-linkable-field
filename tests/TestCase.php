@@ -2,18 +2,14 @@
 
 namespace Tests;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Tests\Testbench\Models\Page;
 
 class TestCase extends Orchestra
 {
     protected function setUp(): void
     {
         parent::setUp();
-
-        Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'VendorName\\Skeleton\\Database\\Factories\\'.class_basename($modelName).'Factory'
-        );
     }
 
     protected function getPackageProviders($app)
@@ -28,7 +24,12 @@ class TestCase extends Orchestra
 
     public function getEnvironmentSetUp($app)
     {
-        config()->set('database.default', 'testing');
+        $app['config']->set('database.default', 'testbench');
+        $app['config']->set('database.connections.testbench', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+            'prefix'   => '',
+        ]);
 
         $migration = include __DIR__.'/../database/migrations/2022_03_29_105312_create_model_linkables_table.php';
         $migration->up();

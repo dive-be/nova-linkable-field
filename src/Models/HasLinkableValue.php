@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Dive\LinkableField;
+namespace Dive\LinkableField\Models;
 
 interface HasLinkableValue
 {

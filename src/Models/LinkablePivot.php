@@ -1,10 +1,10 @@
 <?php
 
-namespace Dive\LinkableField;
+namespace Dive\LinkableField\Models;
 
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
 class LinkablePivot extends MorphPivot
 {
-    protected $table = 'url_linkables';
+    protected $table = 'model_linkables';
 }

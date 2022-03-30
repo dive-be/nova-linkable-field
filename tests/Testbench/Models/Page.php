@@ -2,7 +2,7 @@
 
 namespace Tests\Testbench\Models;
 
-use Dive\LinkableField\HasLinkableValue;
+use Dive\LinkableField\Models\HasLinkableValue;
 use Illuminate\Database\Eloquent\Model;
 
 class Page extends Model implements HasLinkableValue
