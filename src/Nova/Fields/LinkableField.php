@@ -146,7 +146,7 @@ class LinkableField extends Field
     private function setLinkedId($model, int $value)
     {
         // TODO: Check if we can use `LinkablePivot` here
-        \DB::table('url_linkables')->updateOrInsert([
+        \DB::table('model_linkables')->updateOrInsert([
             'source_type' => get_class($model),
             'source_id' => $model->getKey(),
         ], [

@@ -12,6 +12,7 @@ class NavItem extends Model
     protected $table = 'nav_items';
 
     protected array $linkables = [
-        'url' => \Domain\Editorial\Models\Page::class
+        'url' => \Domain\Editorial\Models\Page::class,
+        'body' => \Domain\Editorial\Models\ContentBlock::class
     ];
 }

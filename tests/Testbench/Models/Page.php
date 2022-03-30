@@ -12,7 +12,7 @@ class Page extends Model implements HasLinkableValue
     public function getLinkableValue(string $field): ?string
     {
         return match ($field) {
-            'url' => "/path/to/" . $this->slug,
+            'url' => '/path/to/' . $this->slug,
             default => null
         };
     }

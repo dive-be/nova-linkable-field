@@ -2,6 +2,9 @@
 
 namespace Dive\LinkableField\Models;
 
+// Replace with registry, akin to:
+// https://github.com/facade/ignition/blob/main/src/SolutionProviders/SolutionProviderRepository.php
+// e.g. "LinkableProviderRegistry"
 interface HasLinkableValue
 {
     public function getLinkableValue(string $field): mixed;

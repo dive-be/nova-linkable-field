@@ -9,8 +9,9 @@ return new class() extends Migration {
     {
         Schema::create('model_linkables', function (Blueprint $table) {
             $table->increments('id');
-            $table->morphs('source');
+            $table->morphs('source'); // TODO: rename to linkable
             $table->morphs('target');
+            // TODO: target_type -> 'url'
         });
     }
 };
