@@ -52,9 +52,9 @@ This allows you to do:
 
 ```php
 // whether a model or a manual value, the correct URL will be returned!
-$url = $menuItem->getLinkable('url') 
+$url = $menuItem->getLinkable('url');
 ```
-Please note that the model you're linking to should have an accessor or an attribute that matches the field (in this case, `url`).
+Please note that the model you're linking to should have an accessor or an attribute that matches the field (in this case, `url`). If the field is translatable (using Spatie's excellent package) then this is supported as well.
 
 ## Changelog
 

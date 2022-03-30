@@ -21,6 +21,11 @@ class TestCase extends Orchestra
         return [];
     }
 
+    protected function defineDatabaseMigrations()
+    {
+        $this->loadMigrationsFrom(__DIR__ . '/Testbench/Database/Migrations');
+    }
+
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');

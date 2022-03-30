@@ -1,5 +1,5 @@
 <?php
 
-it('can test', function () {
+it('can retrieve post via linkable', function () {
     expect(true)->toBeTrue();
 });
