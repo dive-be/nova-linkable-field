@@ -96,7 +96,7 @@ class LinkableField extends Field
             ->where('source_type', '=', get_class($model))
             ->where('source_id', '=', $model->getKey())
             ->where('target_type', $this->linkableType)
-            ->select('dive_model_linkables.target_id');
+            ->select('model_linkables.target_id');
     }
 
     private function getDisplayValue(Model $resource, $attribute): string
