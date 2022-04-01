@@ -2,10 +2,12 @@
 
 namespace Dive\LinkableField\Nova\Fields;
 
+use Dive\LinkableField\Models\LinkablePivot;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use phpDocumentor\Reflection\DocBlock\Tags\Link;
 
 class LinkableField extends Field
 {
@@ -92,7 +94,7 @@ class LinkableField extends Field
 
     private function buildLinkableQuery(Model $model): Builder
     {
-        return \DB::table('model_linkables')
+        return LinkablePivot::query()
             ->where('source_type', '=', get_class($model))
             ->where('source_id', '=', $model->getKey())
             ->where('target_type', $this->linkableType)
@@ -145,8 +147,7 @@ class LinkableField extends Field
 
     private function setLinkedId($model, int $value)
     {
-        // TODO: Check if we can use `LinkablePivot` here
-        \DB::table('model_linkables')->updateOrInsert([
+        LinkablePivot::query()->updateOrInsert([
             'source_type' => get_class($model),
             'source_id' => $model->getKey(),
         ], [
