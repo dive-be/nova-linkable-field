@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Dive\LinkableField\Models\LinkablePivot;
+use Dive\Nova\Linkable\Models\Linkable;
 use Tests\Testbench\Models\NavItem;
 use Tests\Testbench\Models\Page;
 
@@ -24,7 +24,7 @@ it('can retrieve multiple nav items', function () {
 
     $entries = NavItem::query()->get();
 
-    LinkablePivot::query()->insert([
+    Linkable::query()->insert([
         'source_type' => NavItem::class,
         'source_id' => $entries[1]->id,
         'target_type' => Page::class,

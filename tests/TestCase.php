@@ -18,19 +18,12 @@ class TestCase extends Orchestra
 
     protected function defineDatabaseMigrations()
     {
-        $this->loadMigrationsFrom(__DIR__ . '/Testbench/Database/Migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/Testbench/Database');
     }
 
     public function getEnvironmentSetUp($app)
     {
-        $app['config']->set('database.default', 'testbench');
-        $app['config']->set('database.connections.testbench', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => '',
-        ]);
-
-        $migration = include __DIR__ . '/../database/migrations/2022_03_29_105312_create_model_linkables_table.php';
+        $migration = include __DIR__ . '/../database/migrations/create_linkables_table.php.stub';
         $migration->up();
     }
 }
