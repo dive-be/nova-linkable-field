@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
-use Tests\Testbench\Models\Page;
-use Tests\Testbench\Models\NavItem;
 use Dive\LinkableField\Models\LinkablePivot;
+use Tests\Testbench\Models\NavItem;
+use Tests\Testbench\Models\Page;
 
 beforeEach(function () {
     Page::query()->insert([
@@ -28,7 +28,7 @@ it('can retrieve multiple nav items', function () {
         'source_type' => NavItem::class,
         'source_id' => $entries[1]->id,
         'target_type' => Page::class,
-        'target_id' => 1
+        'target_id' => 1,
     ]);
 
     $this->markTestIncomplete('Linkable implementation missing');

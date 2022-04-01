@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Dive\LinkableField\Models;
+namespace Dive\Nova\Linkable\Models;
 
 trait HasLinkableRelationship
 {

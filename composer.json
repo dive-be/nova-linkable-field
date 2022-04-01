@@ -1,6 +1,6 @@
 {
     "name": "dive-be/nova-linkable-field",
-    "description": "This package allows you to provide a field that can optionally link to a different model as an alternative to a manual attribute value.",
+    "description": "Optionally link to a different model as an alternative to a manual attribute value.",
     "keywords": [
         "laravel",
         "nova",
@@ -9,15 +9,17 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
-        "doctrine/dbal": "^3.2"
+        "laravel/nova": "^3.31"
     },
     "require-dev": {
-        "orchestra/testbench": "^7.0",
+        "friendsofphp/php-cs-fixer": "^3.8",
+        "nunomaduro/larastan": "^2.1",
+        "orchestra/testbench": "^7.2",
         "pestphp/pest": "^1.21"
     },
     "autoload": {
         "psr-4": {
-            "Dive\\LinkableField\\": "src/"
+            "Dive\\Nova\\Linkable\\": "src/"
         }
     },
     "autoload-dev": {
@@ -28,7 +30,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Dive\\LinkableField\\FieldServiceProvider"
+                "Dive\\Nova\\Linkable\\FieldServiceProvider"
             ]
         }
     },
@@ -37,6 +39,11 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true
         }
+    },
+    "scripts": {
+        "analyse": "vendor/bin/phpstan analyse --memory-limit=2G",
+        "format": "vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php --allow-risky=yes",
+        "test": "vendor/bin/pest"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

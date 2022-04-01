@@ -36,4 +36,10 @@
     <logging>
         <junit outputFile="build/report.junit.xml"/>
     </logging>
+    <php>
+        <server name="APP_KEY" value="base64:lVpJ4rRn1kh/k/UzoZth646DCSpSyTXzUzhWNc/bm+c=" />
+        <server name="APP_NAME" value="Nova Linkable" />
+        <server name="DB_CONNECTION" value="sqlite"/>
+        <server name="DB_DATABASE" value=":memory:"/>
+    </php>
 </phpunit>

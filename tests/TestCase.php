@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests;
 
 use Orchestra\Testbench\TestCase as Orchestra;
-use Tests\Testbench\Models\Page;
 
 class TestCase extends Orchestra
 {
@@ -26,12 +25,12 @@ class TestCase extends Orchestra
     {
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
 
-        $migration = include __DIR__.'/../database/migrations/2022_03_29_105312_create_model_linkables_table.php';
+        $migration = include __DIR__ . '/../database/migrations/2022_03_29_105312_create_model_linkables_table.php';
         $migration->up();
     }
 }

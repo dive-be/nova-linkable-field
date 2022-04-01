@@ -1,5 +1,7 @@
 # Changelog
 
-## 1.0.0 - ???
+All notable changes to `nova-linkable-field` will be documented in this file.
 
-- Initial release
+## 1.0.0 - 202X-XX-XX
+
+- initial release

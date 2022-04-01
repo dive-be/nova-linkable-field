@@ -1,15 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace Dive\LinkableField\Nova\Fields;
+namespace Dive\Nova\Linkable;
 
-use Dive\LinkableField\Models\LinkablePivot;
-use Illuminate\Database\Eloquent\Model;
+use Dive\Nova\Linkable\Models\Linkable as Pivot;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use phpDocumentor\Reflection\DocBlock\Tags\Link;
 
-class LinkableField extends Field
+class Linkable extends Field
 {
     /** @var string */
     public $component = 'flexible-url-field';
@@ -17,7 +16,6 @@ class LinkableField extends Field
     /** @var array Additional metable information exposed to the JS. */
     protected array $extraMetable = [];
 
-    /** @var bool */
     protected bool $isTranslatable = false;
 
     /** @var string The resolved class of the type we wish to link. */
@@ -29,7 +27,7 @@ class LinkableField extends Field
     /** @var Builder The query builder that is used to determine the linked ID. */
     protected Builder $linkableQueryBuilder;
 
-    public function __construct(string $name, string $attribute = null, callable $resolveCallback = null)
+    public function __construct(string $name, string $attribute = null)
     {
         parent::__construct($name, $attribute, function ($value, $resource) use ($attribute) {
             $this->isTranslatable = $this->isTranslatable($resource);
@@ -86,7 +84,7 @@ class LinkableField extends Field
                 ->get(array_merge(['id'], $columnsToQuery))
                 ->flatMap(function ($record) use ($displayCallback) {
                     return [$record->id => $displayCallback($record)];
-                })
+                }),
         ];
 
         return $this;
@@ -94,7 +92,7 @@ class LinkableField extends Field
 
     private function buildLinkableQuery(Model $model): Builder
     {
-        return LinkablePivot::query()
+        return Pivot::query()
             ->where('source_type', '=', get_class($model))
             ->where('source_id', '=', $model->getKey())
             ->where('target_type', $this->linkableType)
@@ -107,7 +105,7 @@ class LinkableField extends Field
             $url = $resource->getAttribute($attribute);
 
             if (empty($url)) {
-                $url = "<empty>";
+                $url = '<empty>';
             }
 
             return "Manual URL: {$url}";
@@ -115,12 +113,13 @@ class LinkableField extends Field
 
         $name = $this->extraMetable['linkedName'];
         $displayValue = $this->extraMetable['linkedValues'][$this->linkableId];
+
         return "Linked {$name}: {$displayValue}";
     }
 
     private function getValue($resource, $attribute): array|string
     {
-        if (!$this->isTranslatable) {
+        if (! $this->isTranslatable) {
             return $resource->getAttribute($attribute);
         }
 
@@ -129,8 +128,8 @@ class LinkableField extends Field
         collect(config('nova-translatable.locales'))
             ->keys()
             ->each(function ($key) use (&$translations) {
-                if (!array_key_exists($key, $translations)) {
-                    $translations[$key] = "";
+                if (! array_key_exists($key, $translations)) {
+                    $translations[$key] = '';
                 }
             });
 
@@ -147,14 +146,14 @@ class LinkableField extends Field
 
     private function setLinkedId($model, int $value)
     {
-        LinkablePivot::query()->updateOrInsert([
+        Pivot::query()->updateOrInsert([
             'source_type' => get_class($model),
             'source_id' => $model->getKey(),
         ], [
             'source_type' => get_class($model),
             'source_id' => $model->getKey(),
             'target_type' => $this->linkableType,
-            'target_id' => $value
+            'target_id' => $value,
         ]);
     }
 

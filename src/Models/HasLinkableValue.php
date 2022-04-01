@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Dive\LinkableField\Models;
+namespace Dive\Nova\Linkable\Models;
 
 // Replace with registry, akin to:
 // https://github.com/facade/ignition/blob/main/src/SolutionProviders/SolutionProviderRepository.php
