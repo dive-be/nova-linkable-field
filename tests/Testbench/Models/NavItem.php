@@ -2,17 +2,20 @@
 
 namespace Tests\Testbench\Models;
 
-use Dive\Nova\Linkable\Models\HasLinkableRelationship;
+use Dive\Nova\Linkable\Models\HasLinks;
 use Illuminate\Database\Eloquent\Model;
 
 class NavItem extends Model
 {
-    use HasLinkableRelationship;
+    use HasLinks;
 
     protected $table = 'nav_items';
 
-    protected array $linkables = [
-        'url' => \Domain\Editorial\Models\Page::class,
-        // 'body' => \Domain\Editorial\Models\ContentBlock::class
-    ];
+    protected function targets(): array
+    {
+        return [
+            'url' => \Domain\Editorial\Models\Page::class,
+            'internal_url' => \Domain\Editorial\Models\Page::class,
+        ];
+    }
 }

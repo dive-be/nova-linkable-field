@@ -10,14 +10,23 @@ class FieldServiceProvider extends ServiceProvider
 {
     public function boot()
     {
+        if ($this->app->runningInConsole()) {
+            $this->registerMigrations();
+        }
+
+        if ($this->app->runningUnitTests()) {
+            return;
+        }
+
         Nova::serving(static function () {
             Nova::script('flexible-url-field', __DIR__ . '/../dist/js/field.js');
             Nova::style('flexible-url-field', __DIR__ . '/../dist/css/field.css');
         });
+    }
 
-        if ($this->app->runningInConsole()) {
-            $this->registerMigrations();
-        }
+    public function register()
+    {
+        $this->mergeConfigFrom(__DIR__.'/../config/nova-linkable-field.php', 'nova-linkable-field');
     }
 
     private function registerMigrations()

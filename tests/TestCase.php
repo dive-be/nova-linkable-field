@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Dive\Nova\Linkable\FieldServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
@@ -13,7 +14,9 @@ class TestCase extends Orchestra
 
     protected function getPackageProviders($app)
     {
-        return [];
+        return [
+            FieldServiceProvider::class,
+        ];
     }
 
     protected function defineDatabaseMigrations()
@@ -23,7 +26,7 @@ class TestCase extends Orchestra
 
     public function getEnvironmentSetUp($app)
     {
-        $migration = include __DIR__ . '/../database/migrations/create_linkables_table.php.stub';
+        $migration = include __DIR__ . '/../database/migrations/create_links_table.php.stub';
         $migration->up();
     }
 }

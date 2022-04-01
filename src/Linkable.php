@@ -2,7 +2,7 @@
 
 namespace Dive\Nova\Linkable;
 
-use Dive\Nova\Linkable\Models\Linkable as Pivot;
+use Dive\Nova\Linkable\Models\Link as Pivot;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Nova\Fields\Field;
