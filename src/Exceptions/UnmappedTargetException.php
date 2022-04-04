@@ -2,4 +2,4 @@
 
 namespace Dive\Nova\Linkable\Exceptions;
 
-class UnmappedAttributeException extends \Exception {}
+class UnmappedTargetException extends \Exception {}

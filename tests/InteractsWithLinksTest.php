@@ -2,6 +2,7 @@
 
 use Tests\Testbench\Database\SimpleSeeder;
 use Tests\Testbench\Models\NavItem;
+use Dive\Nova\Linkable\LinkedCollection;
 
 beforeEach(function () {
     SimpleSeeder::run();
@@ -38,7 +39,16 @@ it('cannot retrieve value that is not mapped (throws exception)', function () {
         ->where('title', '=', 'About')
         ->firstOrFail();
 
-    $this->expectException(\Dive\Nova\Linkable\Exceptions\UnmappedAttributeException::class);
+    $this->expectException(\Dive\Nova\Linkable\Exceptions\UnmappedTargetException::class);
 
-    $data = $navItem->getTargetsByAttribute('some_attribute');
+    $navItem->getTargetsByAttribute('attribute');
+});
+
+it('can retrieve bulk attribute values', function () {
+    $collection = LinkedCollection::create(NavItem::all())
+        ->loadLinkedData(['url', 'internal_url']);
+
+    $this->markTestIncomplete('The LinkedCollection does not set `linkedValues` on the model yet.');
+
+    $this->assertNotNull($collection->first()->linkedValues);
 });

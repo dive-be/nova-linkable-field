@@ -2,7 +2,7 @@
 
 namespace Dive\Nova\Linkable\Models;
 
-use Dive\Nova\Linkable\Exceptions\UnmappedAttributeException;
+use Dive\Nova\Linkable\Exceptions\UnmappedTargetException;
 use Dive\Nova\Linkable\LinkRepository;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Collection;
@@ -26,8 +26,8 @@ trait InteractsWithLinks
 
     public function getTargetsByAttribute($attribute): Collection
     {
-        if (!array_key_exists($attribute, $this->targets())) {
-            throw new UnmappedAttributeException("This attribute (`$attribute`) must be mapped on the model before the associated model(s) can be retrieved.");
+        if (! array_key_exists($attribute, $this->targets())) {
+            throw new UnmappedTargetException("This attribute (`$attribute`) must be mapped on the model before the associated model(s) can be retrieved.");
         }
 
         return $this->getLinksRepository()
