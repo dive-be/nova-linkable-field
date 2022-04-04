@@ -2,12 +2,12 @@
 
 namespace Tests\Testbench\Models;
 
-use Dive\Nova\Linkable\Models\HasLinks;
+use Dive\Nova\Linkable\Models\InteractsWithLinks;
 use Illuminate\Database\Eloquent\Model;
 
 class NavItem extends Model
 {
-    use HasLinks;
+    use InteractsWithLinks;
 
     protected $table = 'nav_items';
 

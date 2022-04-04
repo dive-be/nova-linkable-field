@@ -27,6 +27,12 @@ class FieldServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/nova-linkable-field.php', 'nova-linkable-field');
+
+        $this->app->singleton(LinkRepository::class, function () {
+            $linkModelClass = config('nova-linkable-field.model');
+
+            return new LinkRepository(new $linkModelClass());
+        });
     }
 
     private function registerMigrations()

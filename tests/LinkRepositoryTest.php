@@ -8,21 +8,14 @@ beforeEach(function () {
     SimpleSeeder::run();
 });
 
-it('can create link repository', function () {
-    $name = config('nova-linkable-field.model');
-
-    /** @var \Dive\Nova\Linkable\Models\Link $link */
-    $link = new $name;
-
-    $this->linkRepository = new LinkRepository($link);
-
+test('service container can resolve link repository', function () {
+    $this->linkRepository = app(LinkRepository::class);
     $this->assertNotNull($this->linkRepository);
 });
 
-it('can retrieve all linked pages', function () {
-    $navItem = NavItem::query()
-        ->where('title', '=', 'About')
-        ->firstOrFail();
+test('resolved link repository is singleton', function () {
+    $repository1 = app(LinkRepository::class);
+    $repository2 = app(LinkRepository::class);
 
-    $this->assertNotNull($navItem);
+    $this->assertEquals($repository1, $repository2);
 });
