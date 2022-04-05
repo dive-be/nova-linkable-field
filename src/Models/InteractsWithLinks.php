@@ -24,7 +24,7 @@ trait InteractsWithLinks
         return app(LinkRepository::class);
     }
 
-    public function getTargetsByAttribute($attribute): Collection
+    public function getTargetsByAttribute(string $attribute): Collection
     {
         if (! array_key_exists($attribute, $this->targets())) {
             throw new UnmappedTargetException("This attribute (`$attribute`) must be mapped on the model before the associated model(s) can be retrieved.");

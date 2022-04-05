@@ -7,6 +7,11 @@ beforeEach(function () {
     SimpleSeeder::run();
 });
 
+it('must use trait', function () {
+    $this->expectException(\Exception::class);
+    $collection = \Dive\Nova\Linkable\LinkedCollection::create(['hello', 'primitive']);
+});
+
 it('can create from items', function () {
     $collection = \Dive\Nova\Linkable\LinkedCollection::create(NavItem::all());
     $this->assertInstanceOf(\Dive\Nova\Linkable\LinkedCollection::class, $collection);
@@ -18,8 +23,5 @@ it('can retrieve linked records', function () {
 
     $this->assertNotNull($collection->first());
 
-    $this->markTestIncomplete('The LinkedCollection does not set `linkedValues` on the model yet.');
-
-    // TODO: How do we cache this on the LinkedCollection's individual models?
     $this->assertNotNull($collection->first()->linkedValues);
 });
