@@ -33,22 +33,17 @@ it('can retrieve all linked values', function () {
     $this->assertEquals('/path/to/about', $pages->first()->getLinkableValue('url'));
 });
 
+it('can retrieve nav item with nested links', function () {
+    $this->assertNotNull(NavItem::with('links')->get());
+});
+
 it('cannot retrieve value that is not mapped (throws exception)', function () {
     /** @var NavItem $navItem */
-    $navItem = NavItem::query()
+    $navItem = NavItem::with('links')
         ->where('title', '=', 'About')
         ->firstOrFail();
 
     $this->expectException(\Dive\Nova\Linkable\Exceptions\UnmappedTargetException::class);
 
     $navItem->getTargetsByAttribute('attribute');
-});
-
-it('can retrieve bulk attribute values', function () {
-    $collection = LinkedCollection::create(NavItem::all())
-        ->loadLinkedData(['url', 'internal_url']);
-
-    $this->markTestIncomplete('The LinkedCollection does not set `linkedValues` on the model yet.');
-
-    $this->assertNotNull($collection->first()->linkedValues);
 });

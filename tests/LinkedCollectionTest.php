@@ -2,6 +2,8 @@
 
 use Tests\Testbench\Database\SimpleSeeder;
 use Tests\Testbench\Models\NavItem;
+use Tests\Testbench\Models\Page;
+use Dive\Nova\Linkable\LinkedCollection;
 
 beforeEach(function () {
     SimpleSeeder::run();
@@ -9,17 +11,24 @@ beforeEach(function () {
 
 it('must use trait', function () {
     $this->expectException(\Exception::class);
-    $collection = \Dive\Nova\Linkable\LinkedCollection::create(['hello', 'primitive']);
+    LinkedCollection::create(Page::all());
+});
+
+it('cannot create from mixed types', function () {
+    $this->expectException(\Exception::class);
+    LinkedCollection::create(
+        Page::all()->merge(NavItem::all())
+    );
 });
 
 it('can create from items', function () {
-    $collection = \Dive\Nova\Linkable\LinkedCollection::create(NavItem::all());
-    $this->assertInstanceOf(\Dive\Nova\Linkable\LinkedCollection::class, $collection);
+    $collection = LinkedCollection::create(NavItem::all());
+    $this->assertInstanceOf(LinkedCollection::class, $collection);
 });
 
 it('can retrieve linked records', function () {
     $collection = \Dive\Nova\Linkable\LinkedCollection::create(NavItem::all())
-        ->loadLinkedData('url');
+        ->loadLinkedData(['url', 'internal_url']);
 
     $this->assertNotNull($collection->first());
 

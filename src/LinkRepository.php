@@ -17,6 +17,24 @@ class LinkRepository
         return $this->model->newQuery();
     }
 
+    public function applyTargetAttributes(Collection $collection, string|array $attributes): LinkedCollection
+    {
+        return LinkedCollection::make($collection)
+            ->loadLinkedData($attributes);
+    }
+
+    public function getLinks(LinkedCollection $linkables, $attributes)
+    {
+        $ids = $linkables->pluck('id');
+        $type = $linkables->first()::class;
+
+        return $this->query()
+            ->whereIn('linkable_id', $ids)
+            ->where('linkable_type', $type)
+            ->whereIn('attribute', $attributes)
+            ->get();
+    }
+
     public function getTargetsByAttribute(Collection $links, string $attribute): Collection
     {
         $items = $links->where('attribute', '=', $attribute);

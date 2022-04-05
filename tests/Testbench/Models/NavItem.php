@@ -11,11 +11,11 @@ class NavItem extends Model
 
     protected $table = 'nav_items';
 
-    protected function targets(): array
+    public function targets(): array
     {
         return [
-            'url' => \Domain\Editorial\Models\Page::class,
-            'internal_url' => \Domain\Editorial\Models\Page::class,
+            'url' => Page::class,
+            'internal_url' => Page::class,
         ];
     }
 }

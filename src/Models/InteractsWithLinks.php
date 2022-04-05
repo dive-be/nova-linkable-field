@@ -10,9 +10,9 @@ use Illuminate\Support\Collection;
 /** @mixin \Illuminate\Database\Eloquent\Model */
 trait InteractsWithLinks
 {
-    // TODO: Set up registry
-    // Like: https://github.com/facade/ignition/blob/main/src/SolutionProviders/SolutionProviderRepository.php
-    abstract protected function targets(): array;
+    // TODO: Eventually replace this with a registry
+    // Fhttps://github.com/facade/ignition/blob/main/src/SolutionProviders/SolutionProviderRepository.php
+    abstract public function targets(): array;
 
     public function links(): MorphMany
     {
@@ -24,10 +24,14 @@ trait InteractsWithLinks
         return app(LinkRepository::class);
     }
 
+    /**
+     * Retrieve the actual targets belonging to a particular attribute.
+     * @throws UnmappedTargetException
+     */
     public function getTargetsByAttribute(string $attribute): Collection
     {
         if (! array_key_exists($attribute, $this->targets())) {
-            throw new UnmappedTargetException("This attribute (`$attribute`) must be mapped on the model before the associated model(s) can be retrieved.");
+            throw new UnmappedTargetException("This attribute (`$attribute`) must be mapped on the model.");
         }
 
         return $this->getLinksRepository()
