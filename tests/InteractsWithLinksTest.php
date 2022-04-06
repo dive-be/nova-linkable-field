@@ -3,6 +3,7 @@
 use Tests\Testbench\Database\SimpleSeeder;
 use Tests\Testbench\Models\NavItem;
 use Dive\Nova\Linkable\Exceptions\UnmappedTargetException;
+use Dive\Nova\Linkable\LinkedCollection;
 
 beforeEach(function () {
     SimpleSeeder::run();
@@ -46,4 +47,49 @@ it('cannot retrieve value that is not mapped (throws exception)', function () {
     $this->expectException(UnmappedTargetException::class);
 
     $navItem->getTargetsByAttribute('attribute');
+});
+
+it('can retrieve url via linked model', function () {
+    /** @var NavItem $navItem */
+    $navItem = NavItem::query()
+        ->where('title', '=', 'About')
+        ->firstOrFail();
+
+    $this->assertEquals(
+        '/path/to/about',
+        $navItem->getLinkedAttributeValue('url')
+    );
+});
+
+it('can retrieve url via fallback property', function () {
+    /** @var NavItem $navItem */
+    $navItem = NavItem::query()
+        ->where('title', '=', 'Home')
+        ->firstOrFail();
+
+    $this->assertEquals(
+        '/home',
+        $navItem->getLinkedAttributeValue('url')
+    );
+});
+
+it('retrieving targets from attribute uses existing data', function () {
+    DB::connection()->enableQueryLog();
+
+    $collection = LinkedCollection::create(NavItem::all())
+        ->loadLinkedData(['url', 'internal_url']);
+    $this->assertEquals(3, count(DB::getQueryLog()), "Too many queries were performed.");
+
+    $collection->first()->getLinkedAttributeValue('url');
+    $this->assertEquals(3, count(DB::getQueryLog()), "Too many queries were performed.");
+});
+
+it('retrieving targets without calling `loadLinkedData` does individual queries', function () {
+    DB::connection()->enableQueryLog();
+
+    $collection = LinkedCollection::create(NavItem::all());
+    $this->assertEquals(1, count(DB::getQueryLog()), "Too many queries were performed.");
+
+    $collection->first()->getLinkedAttributeValue('url');
+    $this->assertEquals(2, count(DB::getQueryLog()), "Too many queries were performed.");
 });

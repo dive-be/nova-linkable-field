@@ -30,19 +30,22 @@ class LinkedCollection extends Collection
         return new static($items);
     }
 
+    public function getLinkRepository(): LinkRepository
+    {
+        return app(LinkRepository::class);
+    }
+
     public function loadLinkedData(string|array $attributes): self
     {
         if (is_string($attributes)) {
             $attributes = [$attributes];
         }
 
-        $repository = app(LinkRepository::class);
-
         // Query links (not via the relationship, because that'd require too many queries)
-        $links = $repository->getLinks($this, $attributes);
+        $links = $this->getLinkRepository()->getLinks($this, $attributes);
 
         // Query all the target types and keep track of them by ID
-        $targets = $repository->getTargetIdsByType($links);
+        $targets = $this->getLinkRepository()->getTargetIdsByType($links);
 
         // Map these for each entry in the collection
         $this->each(function ($element) use ($links, $attributes, $targets) {
@@ -57,7 +60,6 @@ class LinkedCollection extends Collection
                     $attribute => $elementLinks
                         ->where('attribute', $attribute)
                         ->map(fn ($link) => $targets[$link->target_type][$link->target_id])
-                        ->all()
                 ]);
 
             // 2. Pre-populate the attribute values too

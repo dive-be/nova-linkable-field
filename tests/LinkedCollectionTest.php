@@ -41,7 +41,7 @@ it('can retrieve linked records', function () {
     $queries = DB::getQueryLog();
 
     // We expect three actual queries
-    $this->assertEquals(3, count($queries), "Expected query count mismatched!");
+    $this->assertEquals(3, count($queries), "Too many queries were performed.");
 
     // 1. The fetching of the nav items
     $this->assertEquals('select * from "nav_items"', $queries[0]["query"]);
@@ -68,7 +68,7 @@ it('can retrieve limited linked records', function () {
 
     $queries = DB::getQueryLog();
 
-    $this->assertEquals(3, count($queries), "Expected query count mismatched!");
+    $this->assertEquals(3, count($queries), "Too many queries were performed.");
 
     // 1. The fetching of the nav items
     $this->assertEquals('select * from "nav_items"', $queries[0]["query"]);

@@ -3,6 +3,7 @@
 namespace Dive\Nova\Linkable\Models;
 
 use Dive\Nova\Linkable\Exceptions\UnmappedTargetException;
+use Dive\Nova\Linkable\LinkedCollection;
 use Dive\Nova\Linkable\LinkRepository;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Collection;
@@ -26,6 +27,7 @@ trait InteractsWithLinks
 
     /**
      * Retrieve the actual targets belonging to a particular attribute.
+     *
      * @throws UnmappedTargetException
      */
     public function getTargetsByAttribute(string $attribute): Collection
@@ -34,7 +36,36 @@ trait InteractsWithLinks
             throw new UnmappedTargetException("This attribute (`$attribute`) must be mapped on the model.");
         }
 
-        return $this->getLinkRepository()
-            ->getTargetsByAttribute($this->links, $attribute);
+        if (isset($this->linkedTargets)) {
+            return $this->linkedTargets->get($attribute);
+        }
+
+        return LinkedCollection::create([$this])
+            ->loadLinkedData([$attribute])
+            ->first()->linkedTargets->get($attribute);
+    }
+
+    /**
+     * Returns the attribute value, determined by checking the first target's properties.
+     * If no link (and as such no target) exists, the local attribute is used as a fallback.
+     * If the local attribute does not exist, `null` is returned.
+     *
+     * The attribute *must* be mapped or an exception will be thrown.
+     *
+     * @param string $attribute
+     * @return mixed
+     *
+     * @throws UnmappedTargetException
+     */
+    public function getLinkedAttributeValue(string $attribute): mixed
+    {
+        if (isset($this->linkedAttributes)) {
+            return $this->linkedAttributes->get($attribute);
+        }
+
+        $target = $this->getTargetsByAttribute($attribute)->first();
+
+        return $target?->getLinkableValue($attribute)
+            ?? $this->getAttribute($attribute);
     }
 }

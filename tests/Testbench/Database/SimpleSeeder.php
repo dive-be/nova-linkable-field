@@ -25,7 +25,7 @@ class SimpleSeeder
         ]);
 
         NavItem::query()->insert([
-            ['title' => 'Home', 'url' => '/'],
+            ['title' => 'Home', 'url' => '/home'],
             ['title' => 'About', 'url' => null],
         ]);
 
