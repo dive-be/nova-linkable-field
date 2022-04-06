@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 trait InteractsWithLinks
 {
     // TODO: Eventually replace this with a registry
-    // Fhttps://github.com/facade/ignition/blob/main/src/SolutionProviders/SolutionProviderRepository.php
+    // https://github.com/facade/ignition/blob/main/src/SolutionProviders/SolutionProviderRepository.php
     abstract public function targets(): array;
 
     public function links(): MorphMany
@@ -19,7 +19,7 @@ trait InteractsWithLinks
         return $this->morphMany(config('nova-linkable-field.model'), 'linkable');
     }
 
-    public function getLinksRepository(): LinkRepository
+    public function getLinkRepository(): LinkRepository
     {
         return app(LinkRepository::class);
     }
@@ -34,7 +34,7 @@ trait InteractsWithLinks
             throw new UnmappedTargetException("This attribute (`$attribute`) must be mapped on the model.");
         }
 
-        return $this->getLinksRepository()
+        return $this->getLinkRepository()
             ->getTargetsByAttribute($this->links, $attribute);
     }
 }

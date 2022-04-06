@@ -2,7 +2,7 @@
 
 use Tests\Testbench\Database\SimpleSeeder;
 use Tests\Testbench\Models\NavItem;
-use Dive\Nova\Linkable\LinkedCollection;
+use Dive\Nova\Linkable\Exceptions\UnmappedTargetException;
 
 beforeEach(function () {
     SimpleSeeder::run();
@@ -43,7 +43,7 @@ it('cannot retrieve value that is not mapped (throws exception)', function () {
         ->where('title', '=', 'About')
         ->firstOrFail();
 
-    $this->expectException(\Dive\Nova\Linkable\Exceptions\UnmappedTargetException::class);
+    $this->expectException(UnmappedTargetException::class);
 
     $navItem->getTargetsByAttribute('attribute');
 });

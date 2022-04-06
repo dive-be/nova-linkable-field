@@ -23,7 +23,7 @@ class LinkRepository
             ->loadLinkedData($attributes);
     }
 
-    public function getLinks(LinkedCollection $linkables, $attributes)
+    public function getLinks(LinkedCollection $linkables, $attributes): Collection
     {
         $ids = $linkables->pluck('id');
         $type = $linkables->first()::class;
@@ -33,6 +33,18 @@ class LinkRepository
             ->where('linkable_type', $type)
             ->whereIn('attribute', $attributes)
             ->get();
+    }
+
+    public function getTargetIdsByType(Collection $links): Collection
+    {
+        return $links
+            ->groupBy('target_type')
+            ->mapWithKeys(fn ($items, string $target) => [
+                $target => $target::query()
+                    ->whereIn('id', $items->pluck('target_id'))
+                    ->get()
+                    ->mapWithKeys(fn ($item) => [$item->getKey() => $item])
+            ]);
     }
 
     public function getTargetsByAttribute(Collection $links, string $attribute): Collection

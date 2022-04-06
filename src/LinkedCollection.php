@@ -36,21 +36,19 @@ class LinkedCollection extends Collection
             $attributes = [$attributes];
         }
 
-        // Then we'll query all the links (not via the relationship, because that'd require too many queries)
-        $links = app(LinkRepository::class)
-            ->getLinks($this, $attributes);
+        $repository = app(LinkRepository::class);
+
+        // Query links (not via the relationship, because that'd require too many queries)
+        $links = $repository->getLinks($this, $attributes);
 
         // Query all the target types and keep track of them by ID
-        $targets = $links->groupBy('target_type')->mapWithKeys(fn ($items, string $target) => [
-            $target => $target::query()
-                ->whereIn('id', $items->pluck('target_id'))
-                ->get()
-                ->mapWithKeys(fn ($item) => [$item->getKey() => $item])
-        ]);
+        $targets = $repository->getTargetIdsByType($links);
 
+        // Map these for each entry in the collection
         $this->each(function ($element) use ($links, $attributes, $targets) {
             // We're not using the relationship here, because that'd introduce extra queries
-            $elementLinks = $links->where('linkable_id', $element->getKey())
+            $elementLinks = $links
+                ->where('linkable_id', $element->getKey())
                 ->where('linkable_type', $element::class);
 
             // 1. Map the targets that are linked for each of the attributes
