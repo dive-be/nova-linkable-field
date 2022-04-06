@@ -3,7 +3,6 @@
 namespace Dive\Nova\Linkable;
 
 use Dive\Nova\Linkable\Models\InteractsWithLinks;
-use Dive\Nova\Linkable\Models\Link;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -38,7 +37,8 @@ class LinkedCollection extends Collection
         }
 
         // Then we'll query all the links (not via the relationship, because that'd require too many queries)
-        $links = app(LinkRepository::class)->getLinks($this, $attributes);
+        $links = app(LinkRepository::class)
+            ->getLinks($this, $attributes);
 
         // Query all the target types and keep track of them by ID
         $targets = $links->groupBy('target_type')->mapWithKeys(fn ($items, string $target) => [
@@ -66,7 +66,7 @@ class LinkedCollection extends Collection
             $element->linkedAttributes = $element->linkedTargets->map(
                 fn ($items, $attribute) => count($items) > 0
                     ? $items[0]->getLinkableValue($attribute)
-                    : null
+                    : $element->getAttribute($attribute) ?? null
             );
         });
 

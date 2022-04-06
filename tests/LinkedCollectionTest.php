@@ -68,16 +68,15 @@ it('can retrieve limited linked records', function () {
 
     $queries = DB::getQueryLog();
 
-    // We expect three actual queries
     $this->assertEquals(3, count($queries), "Expected query count mismatched!");
 
     // 1. The fetching of the nav items
     $this->assertEquals('select * from "nav_items"', $queries[0]["query"]);
 
-    // 2. The fetching of the links for all nav items in question (for all given attributes)
+    // 2. The fetching of the links for all nav items in question (for one single attribute)
     $this->assertEquals('select * from "links" where "linkable_id" in (?, ?) '
         . 'and "linkable_type" = ? and "attribute" in (?)', $queries[1]["query"]);
 
-    // 3. The fetching of targets for each type (just one here, each nav item is linked to a page)
+    // 3. The fetching of targets for each type (just one here, as we have one single attribute)
     $this->assertEquals('select * from "pages" where "id" in (?)', $queries[2]["query"]);
 });

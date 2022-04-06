@@ -25,6 +25,12 @@ composer require dive-be/nova-linkable-field
 
 ## Usage
 
+### Terminology
+
+* A model can be **linked** to another model.
+* The attached model is called the **target**, and the originator is the **linked** model.
+* If *no target* is specified, the fallback value is used.
+
 ### Setting up the resource
 
 You must run the included migrations:
@@ -46,15 +52,40 @@ LinkableField::make('URL', 'url')
 
 ### Setting up the model
 
-In order to access the value via the model (in views, etc.) it is recommended to add the `HasLinkable` trait to your model.
-
-This allows you to do:
+First, let's start off with the **link** class, which is the originator. It needs the `InteractsWithLinks` trait.
 
 ```php
-// whether a model or a manual value, the correct URL will be returned!
-$url = $menuItem->getLinkable('url');
+use InteractsWithLinks;
 ```
-Please note that the model you're linking to should have an accessor or an attribute that matches the field (in this case, `url`). If the field is translatable (using Spatie's excellent package) then this is supported as well.
+
+As a part of this trait you must implement the abstract method, `targets()` which defines how the models are linked to properties, for example:
+
+```php
+public function targets(): array
+{
+    return [
+        'url' => Page::class,
+    ];
+}
+```
+
+So, if you have a homogeneous collection that contains solely models of the same type, you can load this information. Here's how you can do this:
+
+```php
+use \Dive\Nova\Linkable\LinkedCollection;
+
+// Load the target relationships and attributes in as few queries as possible
+$menuItems = LinkedCollection::create(MenuItem::all())
+    ->loadLinkedData(['url']);
+
+// Access the target (returns a model)
+$menuItems->first()->linkedTargets['url'];
+
+// Access the attribute (returns a value by calling `getLinkableValue()` on the linked target model)
+$menuItems->first()->linkedAttributes['url'];
+```
+
+If you attempt to load linked relationships on a non-homogenous collection or on models that do not support linkable values, you'll get an exception explaining what went wrong.
 
 ## Changelog
 

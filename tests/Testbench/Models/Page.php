@@ -9,14 +9,6 @@ class Page extends Model implements HasLinkableValue
 {
     protected $table = 'pages';
 
-    public function getLinkableValues(): array
-    {
-        return array_map(
-            fn ($key, $value) => $this->getLinkableValue($key),
-            $this->targets()
-        );
-    }
-
     public function getLinkableValue(string $field): ?string
     {
         return match ($field) {
