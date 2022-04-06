@@ -51,9 +51,7 @@ it('cannot retrieve value that is not mapped (throws exception)', function () {
 
 it('can retrieve url via linked model', function () {
     /** @var NavItem $navItem */
-    $navItem = NavItem::query()
-        ->where('title', '=', 'About')
-        ->firstOrFail();
+    $navItem = NavItem::query()->where('title', '=', 'About')->firstOrFail();
 
     $this->assertEquals(
         '/path/to/about',
@@ -63,9 +61,7 @@ it('can retrieve url via linked model', function () {
 
 it('can retrieve url via fallback property', function () {
     /** @var NavItem $navItem */
-    $navItem = NavItem::query()
-        ->where('title', '=', 'Home')
-        ->firstOrFail();
+    $navItem = NavItem::query()->where('title', '=', 'Home')->firstOrFail();
 
     $this->assertEquals(
         '/home',
@@ -73,18 +69,27 @@ it('can retrieve url via fallback property', function () {
     );
 });
 
+/**
+ * When attempting to retrieve linked attributes on an item that was populated
+ * with relevant data via `loadLinkedData` the cached data is used.
+ */
 it('retrieving targets from attribute uses existing data', function () {
     DB::connection()->enableQueryLog();
 
     $collection = LinkedCollection::create(NavItem::all())
         ->loadLinkedData(['url', 'internal_url']);
+
     $this->assertEquals(3, count(DB::getQueryLog()), "Too many queries were performed.");
 
     $collection->first()->getLinkedAttributeValue('url');
     $this->assertEquals(3, count(DB::getQueryLog()), "Too many queries were performed.");
 });
 
-it('retrieving targets without calling `loadLinkedData` does individual queries', function () {
+/**
+ * When attempting to retrieve linked attributes on an item that was not populated
+ * with relevant data, a fresh query is executed.
+ */
+it('retrieving targets without calling `loadLinkedData` performs individual queries', function () {
     DB::connection()->enableQueryLog();
 
     $collection = LinkedCollection::create(NavItem::all());
