@@ -30,7 +30,6 @@ it('can retrieve linked records', function () {
     $collection = \Dive\Nova\Linkable\LinkedCollection::create(NavItem::all())
         ->loadLinkedData(['url', 'internal_url']);
 
-    $this->assertNotNull($collection->first());
-
-    $this->assertNotNull($collection->first()->linkedValues);
+    $this->assertNotNull($collection->first()->linkedTargets);
+    $this->assertNotNull($collection->first()->linkedAttributes);
 });

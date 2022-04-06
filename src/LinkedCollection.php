@@ -37,35 +37,38 @@ class LinkedCollection extends Collection
             $attributes = [$attributes];
         }
 
-        /*
-        // Filter out the targets we don't need to query
-        // TODO: This can be removed
-        $targets = collect($this->first()->targets())
-            ->filter(fn ($value, $key) => in_array($key, $attributes))
-            ->map(fn ($value, $key) => ['attribute' => $key, 'class' => $value])
-            ->values()
-            ->groupBy('class')
-            ->map(fn ($values, $key) => [$key => $values->pluck('attribute')])
-            ->values();
-        */
-
         // Then we'll query all the links (not via the relationship, because that'd require too many queries)
         $links = app(LinkRepository::class)->getLinks($this, $attributes);
 
         // Query all the target types and keep track of them by ID
-        $targets = [];
-        $links->groupBy('target_type')->each(function ($items, string $target) use (&$targets) {
-            $targets[$target] = $target::query()
+        $targets = $links->groupBy('target_type')->mapWithKeys(fn ($items, string $target) => [
+            $target => $target::query()
                 ->whereIn('id', $items->pluck('target_id'))
                 ->get()
-                ->mapWithKeys(fn ($item) => [$item->getKey() => $item]);
+                ->mapWithKeys(fn ($item) => [$item->getKey() => $item])
+        ]);
+
+        $this->each(function ($element) use ($links, $attributes, $targets) {
+            // We're not using the relationship here, because that'd introduce extra queries
+            $elementLinks = $links->where('linkable_id', $element->getKey())
+                ->where('linkable_type', $element::class);
+
+            // 1. Map the targets that are linked for each of the attributes
+            $element->linkedTargets = collect($attributes)
+                ->mapWithKeys(fn ($attribute) => [
+                    $attribute => $elementLinks
+                        ->where('attribute', $attribute)
+                        ->map(fn ($link) => $targets[$link->target_type][$link->target_id])
+                        ->all()
+                ]);
+
+            // 2. Pre-populate the attribute values too
+            $element->linkedAttributes = $element->linkedTargets->map(
+                fn ($items, $attribute) => count($items) > 0
+                    ? $items[0]->getLinkableValue($attribute)
+                    : null
+            );
         });
-
-        $class = array_keys($targets)[0];
-        // TODO: For each target we now have a list of IDs
-        dd($targets[$class]);
-
-        // What needs to happen now is each of those ids needs to be resolved in $this
 
         return $this;
     }

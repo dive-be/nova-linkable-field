@@ -12,7 +12,6 @@ return new class() extends Migration {
             $table->morphs('linkable');
             $table->morphs('target');
             $table->string('attribute');
-            $table->timestamps();
         });
     }
 };
