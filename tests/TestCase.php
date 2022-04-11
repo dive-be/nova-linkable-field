@@ -4,6 +4,8 @@ namespace Tests;
 
 use Dive\Nova\Linkable\FieldServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Tests\Testbench\Models\NavItem;
+use Tests\Testbench\Models\Page;
 
 class TestCase extends Orchestra
 {
@@ -28,5 +30,10 @@ class TestCase extends Orchestra
     {
         $migration = include __DIR__ . '/../database/migrations/create_links_table.php.stub';
         $migration->up();
+
+        config()->set(
+            'nova-linkable-field.mapping',
+            [NavItem::class => ['url' => Page::class]]
+        );
     }
 }

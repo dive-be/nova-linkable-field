@@ -10,12 +10,4 @@ class NavItem extends Model
     use InteractsWithLinks;
 
     protected $table = 'nav_items';
-
-    public function targets(): array
-    {
-        return [
-            'url' => Page::class,
-            'internal_url' => Page::class,
-        ];
-    }
 }

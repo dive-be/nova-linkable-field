@@ -21,11 +21,28 @@ test('resolved link repository is singleton', function () {
     $this->assertEquals($modelTargetProvider1, $modelTargetProvider2);
 });
 
-test('link repository has empty model mapping by default', function () {
-    $this->assertEquals([], app(ModelTargetProvider::class)->allMapping());
+test('mapping can be registered via config', function () {
+    config()->set(
+        'nova-linkable-field.mapping',
+        [NavItem::class => ['url' => Page::class]]
+    );
+
+    $targetProvider = app(ModelTargetProvider::class);
+
+    $this->assertEquals(
+        [NavItem::class => ['url' => Page::class]],
+        $targetProvider->allMapping()
+    );
+
+    $this->assertEquals(
+        ['url' => Page::class],
+        $targetProvider->getMapping(NavItem::class)
+    );
 });
 
-test('mapping can be registered', function () {
+test('mapping can be registered via methods', function () {
+    config()->set('nova-linkable-field.mapping', []);
+
     $targetProvider = app(ModelTargetProvider::class);
 
     $this->assertEquals([], $targetProvider->allMapping());
