@@ -94,7 +94,7 @@ class Linkable extends Field
         /** @var Model $linkModel */
         $linkModel = config('nova-linkable-field.model');
 
-        $linkModelTable = $linkModel->getTable();
+        $linkModelTable = (new $linkModel())->getTable();
 
         return $linkModel::query()
             ->where('source_type', '=', get_class($model))
