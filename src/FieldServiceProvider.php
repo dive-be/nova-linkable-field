@@ -41,10 +41,10 @@ class FieldServiceProvider extends ServiceProvider
 
     private function registerConfig()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/nova-linkable-field.php', 'nova-linkable-field');
+        $this->mergeConfigFrom(__DIR__ . '/../config/nova-linkable-field.php', 'nova-linkable-field');
 
         $this->publishes([
-            __DIR__ . '../config/nova-linkable-field.php' => config_path('nova-linkable-field.php')
+            __DIR__ . '/../config/nova-linkable-field.php' => config_path('nova-linkable-field.php')
         ], 'config');
     }
 
