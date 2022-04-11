@@ -91,14 +91,13 @@ class Linkable extends Field
 
     private function buildLinkableQuery(Model $model): Builder
     {
-        /** @var Model $linkModel */
         $linkModel = config('nova-linkable-field.model');
 
         $linkModelTable = (new $linkModel())->getTable();
 
         return $linkModel::query()
-            ->where('source_type', '=', get_class($model))
-            ->where('source_id', '=', $model->getKey())
+            ->where('linkable_type', '=', get_class($model))
+            ->where('linkable_id', '=', $model->getKey())
             ->where('target_type', $this->linkableType)
             ->select("$linkModelTable.target_id");
     }
@@ -150,12 +149,14 @@ class Linkable extends Field
 
     private function setLinkedId($model, int $value)
     {
-        Pivot::query()->updateOrInsert([
-            'source_type' => get_class($model),
-            'source_id' => $model->getKey(),
+        $linkModel = config('nova-linkable-field.model');
+
+        $linkModel::query()->updateOrInsert([
+            'linkable_type' => get_class($model),
+            'linkable_id' => $model->getKey(),
         ], [
-            'source_type' => get_class($model),
-            'source_id' => $model->getKey(),
+            'linkable_type' => get_class($model),
+            'linkable_id' => $model->getKey(),
             'target_type' => $this->linkableType,
             'target_id' => $value,
         ]);
