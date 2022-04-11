@@ -10,6 +10,8 @@ class FieldServiceProvider extends ServiceProvider
 {
     public function boot()
     {
+        $this->registerConfig();
+
         if ($this->app->runningInConsole()) {
             $this->registerMigrations();
         }
@@ -26,8 +28,6 @@ class FieldServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/nova-linkable-field.php', 'nova-linkable-field');
-
         $this->app->singleton(LinkRepository::class, function () {
             $linkModelClass = config('nova-linkable-field.model');
 
@@ -39,9 +39,19 @@ class FieldServiceProvider extends ServiceProvider
         });
     }
 
+    private function registerConfig()
+    {
+        $this->mergeConfigFrom(__DIR__.'/../config/nova-linkable-field.php', 'nova-linkable-field');
+
+        $this->publishes([
+            __DIR__ . '../config/nova-linkable-field.php' => config_path('nova-linkable-field.php')
+        ]);
+    }
+
     private function registerMigrations()
     {
         $migration = 'create_linkables_tables.php';
+
         $doesntExist = Collection::make(glob($this->app->databasePath('migrations/*.php')))
             ->every(fn ($filename) => ! str_ends_with($filename, $migration));
 

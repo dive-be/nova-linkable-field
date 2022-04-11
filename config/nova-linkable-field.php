@@ -1,12 +1,10 @@
-<?php declare(strict_types=1);
-
-use Dive\Nova\Linkable\Models\Link;
+<?php
 
 return [
     /**
      * The fully qualified class names of models that should be used.
      */
-    'model' => Link::class,
+    'model' => Dive\Nova\Linkable\Models\Link::class,
 
     /**
      * How models are linked to each other.

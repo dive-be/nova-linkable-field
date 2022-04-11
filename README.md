@@ -31,10 +31,10 @@ You can install the package via Composer:
 composer require dive-be/nova-linkable-field
 ```
 
-You can publish the migrations with:
+You can publish the migrations and configuration file with:
 
 ```bash
-php artisan vendor:publish --tag=linkable-migrations
+php artisan vendor:publish
 ```
 
 ## Usage
@@ -49,7 +49,7 @@ php artisan vendor:publish --tag=linkable-migrations
 
 You must publish and run the included migrations:
 
-    php artisan vendor:publish --tag=linkable-migrations
+    php artisan vendor:publish
     php artisan migrate
 
 In the resource, you can choose which field you would like to use a linkable field.
@@ -72,15 +72,15 @@ First, let's start off with the **link** class, which is the originator. It need
 use InteractsWithLinks;
 ```
 
-As a part of this trait you must implement the abstract method, `targets()` which defines how the models are linked to properties, for example:
+You must set up the mapping for this model. You can do this by setting up the config value in `nova-linkable-field.php`. For example:
 
 ```php
-public function targets(): array
-{
-    return [
-        'url' => Page::class,
-    ];
-}
+/**
+ * How models are linked to each other.
+ */
+'mapping' => [
+    NavItem::class => ['url' => Page::class]
+]
 ```
 
 So, if you have a homogeneous collection that contains solely models of the same type, you can load this information. Here's how you can do this:
