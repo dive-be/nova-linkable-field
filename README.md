@@ -1,6 +1,14 @@
 # Nova Linkable Field
 
-This package allows you to provide a field that can **optionally link to a different model as an alternative to a manual attribute value**.
+This package allows you to provide a field that can optionally link to a different model as an alternative to a manual attribute value.
+
+## What problem does this package solve?
+
+Sometimes, you want users of the back-end to be able to either derive a value from a different model, or manually fill in the value.
+
+If you have a model that *might* link to another model from which it derives an attribute, but also want to provide a fallback value (in case it isn't linked), that can get messy quick in the back-end. In that case you'll end up with two fields in the resource, and the user needs to understand that the fallback value is only used if the resource isn't linked to another model. Not exactly obvious.
+
+With this package, you can provide a single field where the user can explicitly choose, leaving zero room for confusion: get the value for an attribute from a particular model, or fill it in manually. (Check out the use case below.)
 
 ## Use Case
 
@@ -23,6 +31,12 @@ You can install the package via Composer:
 composer require dive-be/nova-linkable-field
 ```
 
+You can publish the migrations with:
+
+```bash
+php artisan vendor:publish --tag=linkable-migrations
+```
+
 ## Usage
 
 ### Terminology
@@ -33,7 +47,7 @@ composer require dive-be/nova-linkable-field
 
 ### Setting up the resource
 
-You must run the included migrations:
+You must publish and run the included migrations:
 
     php artisan vendor:publish --tag=linkable-migrations
     php artisan migrate
