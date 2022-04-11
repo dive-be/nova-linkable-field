@@ -2,7 +2,6 @@
 
 namespace Dive\Nova\Linkable;
 
-use Dive\Nova\Linkable\Models\Link as Pivot;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Nova\Fields\Field;
@@ -92,11 +91,16 @@ class Linkable extends Field
 
     private function buildLinkableQuery(Model $model): Builder
     {
-        return Pivot::query()
+        /** @var Model $linkModel */
+        $linkModel = config('nova-linkable-field.model');
+
+        $linkModelTable = $linkModel->getTable();
+
+        return $linkModel::query()
             ->where('source_type', '=', get_class($model))
             ->where('source_id', '=', $model->getKey())
             ->where('target_type', $this->linkableType)
-            ->select('model_linkables.target_id');
+            ->select("$linkModelTable.target_id");
     }
 
     private function getDisplayValue(Model $resource, $attribute): string
