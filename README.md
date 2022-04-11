@@ -55,7 +55,9 @@ You must publish and run the included migrations:
 In the resource, you can choose which field you would like to use a linkable field.
 
 ```php
-LinkableField::make('URL', 'url')
+use Dive\Nova\Linkable\Linkable;
+
+Linkable::make('URL', 'url')
     ->withLinkable(
         Page::class, // the related model that is linked
         'CMS Page', // how the model is identified to the user
