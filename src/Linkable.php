@@ -58,6 +58,7 @@ class Linkable extends Field
             match ($request["$requestAttribute-type"]) {
                 'linked' => $this->setLinkedId(
                     model: $model,
+                    requestAttribute: $requestAttribute,
                     value: (int) $request[$requestAttribute]
                 ),
                 'manual' => $this->setManualUrl(
@@ -147,7 +148,7 @@ class Linkable extends Field
         );
     }
 
-    private function setLinkedId($model, int $value)
+    private function setLinkedId($model, $requestAttribute, int $value)
     {
         $linkModel = config('nova-linkable-field.model');
 
@@ -159,6 +160,7 @@ class Linkable extends Field
             'linkable_id' => $model->getKey(),
             'target_type' => $this->linkableType,
             'target_id' => $value,
+            'attribute' => $requestAttribute
         ]);
     }
 
