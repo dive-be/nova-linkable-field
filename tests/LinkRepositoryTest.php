@@ -2,7 +2,6 @@
 
 use Tests\Testbench\Database\SimpleSeeder;
 use Dive\Nova\Linkable\LinkRepository;
-use Tests\Testbench\Models\NavItem;
 
 beforeEach(function () {
     SimpleSeeder::run();

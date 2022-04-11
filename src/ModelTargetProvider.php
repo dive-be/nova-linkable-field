@@ -18,6 +18,11 @@ class ModelTargetProvider
         $this->modelTargetMapping->put($model, $mapping);
     }
 
+    public function allMapping(): array
+    {
+        return $this->modelTargetMapping->all();
+    }
+
     public function getMapping($model): array
     {
         return $this->modelTargetMapping->get($model) ?? [];

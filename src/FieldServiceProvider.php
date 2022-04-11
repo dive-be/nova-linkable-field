@@ -33,6 +33,10 @@ class FieldServiceProvider extends ServiceProvider
 
             return new LinkRepository(new $linkModelClass());
         });
+
+        $this->app->singleton(ModelTargetProvider::class, function () {
+            return new ModelTargetProvider(config('nova-linkable-field.mapping'));
+        });
     }
 
     private function registerMigrations()
