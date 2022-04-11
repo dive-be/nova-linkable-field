@@ -45,12 +45,12 @@ class FieldServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__ . '../config/nova-linkable-field.php' => config_path('nova-linkable-field.php')
-        ]);
+        ], 'config');
     }
 
     private function registerMigrations()
     {
-        $migration = 'create_linkables_tables.php';
+        $migration = 'create_links_table.php';
 
         $doesntExist = Collection::make(glob($this->app->databasePath('migrations/*.php')))
             ->every(fn ($filename) => ! str_ends_with($filename, $migration));
