@@ -34,7 +34,7 @@ composer require dive-be/nova-linkable-field
 You can publish the migrations and configuration file with:
 
 ```bash
-php artisan vendor:publish
+php artisan vendor:publish --provider="Dive\Nova\Linkable\FieldServiceProvider"
 ```
 
 ## Usage
@@ -49,7 +49,7 @@ php artisan vendor:publish
 
 You must publish and run the included migrations:
 
-    php artisan vendor:publish
+    php artisan vendor:publish --provider="Dive\Nova\Linkable\FieldServiceProvider"
     php artisan migrate
 
 In the resource, you can choose which field you would like to use a linkable field.
