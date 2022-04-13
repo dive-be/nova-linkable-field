@@ -4,8 +4,10 @@ namespace Dive\Nova\Linkable;
 
 use Dive\Nova\Linkable\Models\InteractsWithLinks;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+
 
 class LinkedCollection extends Collection
 {
@@ -14,6 +16,10 @@ class LinkedCollection extends Collection
         $uniqueTypes = collect($items)
             ->map(fn ($item) => $item::class)
             ->unique()->count();
+
+        if (count($items) == 0) {
+            return new static([]);
+        }
 
         if ($uniqueTypes > 1) {
             throw new \Exception("This collection cannot contain distinct types.");
@@ -65,12 +71,12 @@ class LinkedCollection extends Collection
 
             // 2. Pre-populate the attribute values too
             $element->linkedAttributes = $element->linkedTargets->map(
-                function ($items, $attribute) use ($element) {
-                    if ($items == null) {
+                function (?EloquentCollection $items, string $attribute) use ($element) {
+                    if ($items === null) {
                         return null;
                     }
                     return count($items) > 0
-                        ? $items[0]->getLinkableValue($attribute)
+                        ? $items->first()->getLinkableValue($attribute)
                         : $element->getAttribute($attribute) ?? null;
                 }
             );

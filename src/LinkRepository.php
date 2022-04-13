@@ -25,6 +25,10 @@ class LinkRepository
 
     public function getLinks(LinkedCollection $linkables, $attributes): Collection
     {
+        if ($linkables->count() == 0) {
+            return collect();
+        }
+
         $ids = $linkables->pluck('id');
         $type = $linkables->first()::class;
 
