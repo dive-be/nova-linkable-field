@@ -59,14 +59,20 @@ class LinkedCollection extends Collection
                 ->mapWithKeys(fn ($attribute) => [
                     $attribute => $elementLinks
                         ->where('attribute', $attribute)
-                        ->map(fn ($link) => $targets[$link->target_type][$link->target_id])
+                        ->map(fn ($link) => $targets->get($link->target_type)?->get($link->target_id))
+                        ->filter(fn ($element) => $element != null)
                 ]);
 
             // 2. Pre-populate the attribute values too
             $element->linkedAttributes = $element->linkedTargets->map(
-                fn ($items, $attribute) => count($items) > 0
-                    ? $items[0]->getLinkableValue($attribute)
-                    : $element->getAttribute($attribute) ?? null
+                function ($items, $attribute) use ($element) {
+                    if ($items == null) {
+                        return null;
+                    }
+                    return count($items) > 0
+                        ? $items[0]->getLinkableValue($attribute)
+                        : $element->getAttribute($attribute) ?? null;
+                }
             );
         });
 
