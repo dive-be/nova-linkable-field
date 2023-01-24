@@ -82,7 +82,7 @@ class Linkable extends Field
             'linkedName' => $readableName,
             'linkedValues' => $this->linkableType::query()
                 ->get(array_merge(['id'], $columnsToQuery))
-                ->flatMap(function ($record) use ($displayCallback) {
+                ->mapWithKeys(function ($record) use ($displayCallback) {
                     return [$record->id => $displayCallback($record)];
                 }),
         ];
@@ -160,7 +160,7 @@ class Linkable extends Field
             'linkable_id' => $model->getKey(),
             'target_type' => $this->linkableType,
             'target_id' => $value,
-            'attribute' => $requestAttribute
+            'attribute' => $requestAttribute,
         ]);
     }
 
