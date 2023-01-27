@@ -117,8 +117,11 @@ class Linkable extends Field
             return "Manual URL: {$url}";
         }
 
-        $name = $this->extraMetable['linkedName'];
-        $displayValue = $this->extraMetable['linkedValues'][$this->linkedId];
+        // Find the correct metable information
+        $linked = $this->extraMetable['linked'][$this->linkedType];
+
+        $name = $linked['linkedName'];
+        $displayValue = $linked['linkedValues'][$this->linkedId];
 
         return "Linked {$name}: {$displayValue}";
     }
@@ -160,7 +163,7 @@ class Linkable extends Field
         ], [
             'linkable_type' => get_class($model),
             'linkable_id' => $model->getKey(),
-            'target_type' => $this->linkableType,
+            'target_type' => $this->linkedType,
             'target_id' => $value,
             'attribute' => $requestAttribute,
         ]);

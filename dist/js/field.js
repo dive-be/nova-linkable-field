@@ -269,12 +269,20 @@ render._withStripped = true;
 /*!*******************************!*\
   !*** ./resources/js/field.js ***!
   \*******************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _components_IndexField_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/IndexField.vue */ "./resources/js/components/IndexField.vue");
+/* harmony import */ var _components_DetailField_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/DetailField.vue */ "./resources/js/components/DetailField.vue");
+/* harmony import */ var _components_FormField_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/FormField.vue */ "./resources/js/components/FormField.vue");
+
+
 
 Nova.booting(function (Vue, router, store) {
-  Vue.component('index-flexible-url-field', __webpack_require__(/*! ./components/IndexField */ "./resources/js/components/IndexField.vue"));
-  Vue.component('detail-flexible-url-field', __webpack_require__(/*! ./components/DetailField */ "./resources/js/components/DetailField.vue"));
-  Vue.component('form-flexible-url-field', __webpack_require__(/*! ./components/FormField */ "./resources/js/components/FormField.vue"));
+  Vue.component('index-flexible-url-field', _components_IndexField_vue__WEBPACK_IMPORTED_MODULE_0__["default"]);
+  Vue.component('detail-flexible-url-field', _components_DetailField_vue__WEBPACK_IMPORTED_MODULE_1__["default"]);
+  Vue.component('form-flexible-url-field', _components_FormField_vue__WEBPACK_IMPORTED_MODULE_2__["default"]);
 });
 
 /***/ }),
