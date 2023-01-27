@@ -154,11 +154,13 @@ var render = function render() {
     attrs: {
       value: "manual"
     }
-  }, [_vm._v("Manual URL")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "linked"
-    }
-  }, [_vm._v("Linked " + _vm._s(_vm.field.linkedName))])]), _vm._v(" "), _c("label", {
+  }, [_vm._v("Manual URL")]), _vm._v(" "), _vm._l(_vm.field.linked, function (field, key) {
+    return _c("option", {
+      domProps: {
+        value: key
+      }
+    }, [_vm._v("\n                Linked " + _vm._s(field.linkedName) + "\n            ")]);
+  })], 2), _vm._v(" "), _c("label", {
     staticClass: "mb-2 mt-4 block"
   }, [_vm._v("Value")]), _vm._v(" "), _vm.type === "manual" ? _c("div", [!_vm.field.translatable ? _c("div", [_c("input", {
     directives: [{
@@ -209,7 +211,7 @@ var render = function render() {
         }
       }
     })]);
-  }), 0) : _vm._e()]) : _vm._e(), _vm._v(" "), _vm.type === "linked" ? _c("select", {
+  }), 0) : _vm._e()]) : _c("select", {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -228,13 +230,13 @@ var render = function render() {
         _vm.linkedId = $event.target.multiple ? $$selectedVal : $$selectedVal[0];
       }
     }
-  }, _vm._l(_vm.field.linkedValues, function (value, id) {
+  }, _vm._l(_vm.field.linked[_vm.type].linkedValues, function (value, id) {
     return _c("option", {
       domProps: {
         value: id
       }
     }, [_vm._v("\n                " + _vm._s(value) + "\n            ")]);
-  }), 0) : _vm._e()])], 2);
+  }), 0)])], 2);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -280,9 +282,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 Nova.booting(function (Vue, router, store) {
-  Vue.component('index-flexible-url-field', _components_IndexField_vue__WEBPACK_IMPORTED_MODULE_0__["default"]);
-  Vue.component('detail-flexible-url-field', _components_DetailField_vue__WEBPACK_IMPORTED_MODULE_1__["default"]);
-  Vue.component('form-flexible-url-field', _components_FormField_vue__WEBPACK_IMPORTED_MODULE_2__["default"]);
+  Vue.component("index-flexible-url-field", _components_IndexField_vue__WEBPACK_IMPORTED_MODULE_0__["default"]);
+  Vue.component("detail-flexible-url-field", _components_DetailField_vue__WEBPACK_IMPORTED_MODULE_1__["default"]);
+  Vue.component("form-flexible-url-field", _components_FormField_vue__WEBPACK_IMPORTED_MODULE_2__["default"]);
 });
 
 /***/ }),
