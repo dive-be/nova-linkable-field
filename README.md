@@ -41,9 +41,9 @@ php artisan vendor:publish --provider="Dive\Nova\Linkable\FieldServiceProvider"
 
 ### Terminology
 
-* A model can be **linked** to another model.
+* A model can be **linked** to one or more models.
 * The attached model is called the **target**, and the originator is the **linked** model.
-* If *no target* is specified, the fallback value is used.
+* If *no target* is specified, the fallback value ("manual value") is used.
 
 ### Setting up the resource
 

@@ -17,11 +17,14 @@ class Linkable extends Field
 
     protected bool $isTranslatable = false;
 
-    /** @var string The resolved class of the type we wish to link. */
-    protected string $linkableType;
+    /** @var array<string> The resolved classes of the types we wish to link. */
+    protected array $linkableTypes = [];
 
     /** @var int|null The resolved ID of the type that was linked to the resource. Null if not linked. */
-    protected ?int $linkableId = null;
+    protected ?int $linkedId = null;
+
+    /** @var string|null The resolved type that was linked to the resource. Null if not linked. */
+    protected ?string $linkedType = null;
 
     /** @var Builder The query builder that is used to determine the linked ID. */
     protected Builder $linkableQueryBuilder;
@@ -33,13 +36,14 @@ class Linkable extends Field
 
             $this->linkableQueryBuilder = $this->buildLinkableQuery($resource);
 
-            $this->linkableId = $this->linkableQueryBuilder->first()?->target_id;
+            $this->linkedId = $this->linkableQueryBuilder->first()?->target_id;
+            $this->linkedType = $this->linkableQueryBuilder->first()?->target_type;
 
             $this->extraMetable = [
                 'locales' => config('nova-translatable.locales'),
                 'translatable' => $this->isTranslatable,
-                'initialType' => $this->linkableId === null ? 'manual' : 'linked',
-                'initialId' => $this->linkableId,
+                'initialType' => $this->linkedType,
+                'initialId' => $this->linkedId,
                 'initialManualValue' => $this->getValue($resource, $attribute),
                 'displayValue' => $this->getDisplayValue($resource, $attribute),
             ] + $this->extraMetable;
@@ -76,11 +80,10 @@ class Linkable extends Field
         array $columnsToQuery,
         callable $displayCallback = null
     ): self {
-        $this->linkableType = $class;
-
-        $this->extraMetable = [
+        $this->linkableTypes[] = $class;
+        $this->extraMetable['linked'][$class] = [
             'linkedName' => $readableName,
-            'linkedValues' => $this->linkableType::query()
+            'linkedValues' => $class::query()
                 ->get(array_merge(['id'], $columnsToQuery))
                 ->mapWithKeys(function ($record) use ($displayCallback) {
                     return [$record->id => $displayCallback($record)];
@@ -99,13 +102,12 @@ class Linkable extends Field
         return $linkModel::query()
             ->where('linkable_type', '=', get_class($model))
             ->where('linkable_id', '=', $model->getKey())
-            ->where('target_type', $this->linkableType)
-            ->select("$linkModelTable.target_id");
+            ->select("$linkModelTable.target_id", "$linkModelTable.target_type");
     }
 
     private function getDisplayValue(Model $resource, $attribute): string
     {
-        if ($this->linkableId == null) {
+        if ($this->linkedId == null) {
             $url = $resource->getAttribute($attribute);
 
             if (empty($url)) {
@@ -116,7 +118,7 @@ class Linkable extends Field
         }
 
         $name = $this->extraMetable['linkedName'];
-        $displayValue = $this->extraMetable['linkedValues'][$this->linkableId];
+        $displayValue = $this->extraMetable['linkedValues'][$this->linkedId];
 
         return "Linked {$name}: {$displayValue}";
     }

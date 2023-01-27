@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Dive\Nova\Linkable;
 
@@ -7,7 +7,6 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-
 
 class LinkedCollection extends Collection
 {
@@ -22,15 +21,15 @@ class LinkedCollection extends Collection
         }
 
         if ($uniqueTypes > 1) {
-            throw new \Exception("This collection cannot contain distinct types.");
+            throw new \Exception('This collection cannot contain distinct types.');
         }
 
         if (! is_a($items[0], Model::class)) {
-            throw new \Exception("The item(s) in the collection must be an Eloquent model.");
+            throw new \Exception('The item(s) in the collection must be an Eloquent model.');
         }
 
         if (! class_uses($items[0], InteractsWithLinks::class)) {
-            throw new \Exception("The model must use the `InteractsWithLinks` trait.");
+            throw new \Exception('The model must use the `InteractsWithLinks` trait.');
         }
 
         return new static($items);
@@ -66,7 +65,7 @@ class LinkedCollection extends Collection
                     $attribute => $elementLinks
                         ->where('attribute', $attribute)
                         ->map(fn ($link) => $targets->get($link->target_type)?->get($link->target_id))
-                        ->filter(fn ($element) => $element != null)
+                        ->filter(fn ($element) => $element != null),
                 ]);
 
             // 2. Pre-populate the attribute values too
@@ -75,6 +74,7 @@ class LinkedCollection extends Collection
                     if ($items === null) {
                         return null;
                     }
+
                     return count($items) > 0
                         ? $items->first()->getLinkableValue($attribute)
                         : $element->getAttribute($attribute) ?? null;
