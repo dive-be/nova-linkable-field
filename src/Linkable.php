@@ -124,9 +124,7 @@ class Linkable extends Field
             return "Manual: {$url}";
         }
 
-        // Find the correct metable information
         $linked = $this->extraMetable['linked'][$this->linkedType];
-
         $name = $linked['linkedName'];
         $displayValue = $linked['linkedValues'][$this->linkedId];
 

@@ -28,7 +28,7 @@ class LinkedCollection extends Collection
             throw new \Exception('The item(s) in the collection must be an Eloquent model.');
         }
 
-        if (! class_uses($items[0], InteractsWithLinks::class)) {
+        if (! in_array(InteractsWithLinks::class, class_uses($items[0]))) {
             throw new \Exception('The model must use the `InteractsWithLinks` trait.');
         }
 
