@@ -58,20 +58,22 @@ class Linkable extends Field
         $model,
         $attribute
     ) {
-        if ($request->exists($requestAttribute)) {
-            match ($request["$requestAttribute-type"]) {
-                'linked' => $this->setLinkedId(
-                    model: $model,
-                    requestAttribute: $requestAttribute,
-                    value: (int) $request[$requestAttribute]
-                ),
-                'manual' => $this->setManualUrl(
-                    model: $model,
-                    requestAttribute: $requestAttribute,
-                    value: $request[$requestAttribute]
-                )
-            };
+        if (! $request->exists("linked_{$requestAttribute}_type")) {
+            $this->setManualUrl(
+                model: $model,
+                requestAttribute: $requestAttribute,
+                value: $request[$requestAttribute]
+            );
+
+            return;
         }
+
+        $this->setLinkedId(
+            model: $model,
+            requestAttribute: $requestAttribute,
+            type: (string) $request["linked_{$requestAttribute}_type"],
+            value: (int) $request["linked_{$requestAttribute}_id"]
+        );
     }
 
     public function withLinkable(
@@ -153,7 +155,7 @@ class Linkable extends Field
         );
     }
 
-    private function setLinkedId($model, $requestAttribute, int $value)
+    private function setLinkedId($model, $type, $requestAttribute, int $value)
     {
         $linkModel = config('nova-linkable-field.model');
 
@@ -163,7 +165,7 @@ class Linkable extends Field
         ], [
             'linkable_type' => get_class($model),
             'linkable_id' => $model->getKey(),
-            'target_type' => $this->linkedType,
+            'target_type' => $type,
             'target_id' => $value,
             'attribute' => $requestAttribute,
         ]);

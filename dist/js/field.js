@@ -34,22 +34,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   mixins: [laravel_nova__WEBPACK_IMPORTED_MODULE_0__.FormField, laravel_nova__WEBPACK_IMPORTED_MODULE_0__.HandlesValidationErrors],
-  props: ['resourceName', 'resourceId', 'field'],
+  props: ["resourceName", "resourceId", "field"],
   data: function data() {
+    var _this$field$initialTy;
     return {
-      type: this.field.initialType,
+      type: (_this$field$initialTy = this.field.initialType) !== null && _this$field$initialTy !== void 0 ? _this$field$initialTy : "manual",
       linkedId: this.field.initialId,
       manualValue: this.field.initialManualValue
     };
   },
   methods: {
     fill: function fill(formData) {
-      formData.append(this.field.attribute + "-type", this.type);
-      if (this.type === 'manual') {
-        formData.append(this.field.attribute, this.field.translatable ? JSON.stringify(this.manualValue) : this.manualValue || '');
-      } else {
-        formData.append(this.field.attribute, this.linkedId);
+      if (this.type === "manual") {
+        return formData.append(this.field.attribute, this.field.translatable ? JSON.stringify(this.manualValue) : this.manualValue || "");
       }
+      formData.append("linked_" + this.field.attribute + "_type", this.type);
+      formData.append("linked_" + this.field.attribute + "_id", this.linkedId);
     }
   }
 });
@@ -159,7 +159,7 @@ var render = function render() {
       domProps: {
         value: key
       }
-    }, [_vm._v("\n                Linked " + _vm._s(field.linkedName) + "\n            ")]);
+    }, [_vm._v("\n        Linked " + _vm._s(field.linkedName) + "\n      ")]);
   })], 2), _vm._v(" "), _c("label", {
     staticClass: "mb-2 mt-4 block"
   }, [_vm._v("Value")]), _vm._v(" "), _vm.type === "manual" ? _c("div", [!_vm.field.translatable ? _c("div", [_c("input", {
@@ -235,7 +235,7 @@ var render = function render() {
       domProps: {
         value: id
       }
-    }, [_vm._v("\n                " + _vm._s(value) + "\n            ")]);
+    }, [_vm._v("\n        " + _vm._s(value) + "\n      ")]);
   }), 0)])], 2);
 };
 var staticRenderFns = [];

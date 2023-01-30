@@ -65,7 +65,7 @@ export default {
 
   data() {
     return {
-      type: this.field.initialType,
+      type: this.field.initialType ?? "manual",
       linkedId: this.field.initialId,
       manualValue: this.field.initialManualValue,
     };
@@ -73,17 +73,17 @@ export default {
 
   methods: {
     fill(formData) {
-      formData.append(this.field.attribute + "-type", this.type);
       if (this.type === "manual") {
-        formData.append(
+        return formData.append(
           this.field.attribute,
           this.field.translatable
             ? JSON.stringify(this.manualValue)
             : this.manualValue || ""
         );
-      } else {
-        formData.append(this.field.attribute, this.linkedId);
       }
+
+      formData.append("linked_" + this.field.attribute + "_type", this.type);
+      formData.append("linked_" + this.field.attribute + "_id", this.linkedId);
     },
   },
 };
