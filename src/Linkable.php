@@ -4,6 +4,7 @@ namespace Dive\Nova\Linkable;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -82,6 +83,10 @@ class Linkable extends Field
         array $columnsToQuery,
         callable $displayCallback = null
     ): self {
+        if (! is_subclass_of($class, Model::class)) {
+            throw new \Exception("Invalid model configuration: $class must be an Eloquent model.");
+        }
+
         $this->linkableTypes[] = $class;
         $this->extraMetable['linked'][$class] = [
             'linkedName' => $readableName,
@@ -116,7 +121,7 @@ class Linkable extends Field
                 $url = '<empty>';
             }
 
-            return "Manual URL: {$url}";
+            return "Manual: {$url}";
         }
 
         // Find the correct metable information
@@ -155,9 +160,24 @@ class Linkable extends Field
         );
     }
 
-    private function setLinkedId($model, $type, $requestAttribute, int $value)
+    /**
+     * @param class-string $type
+     */
+    private function setLinkedId($model, $requestAttribute, $type, int $value)
     {
         $linkModel = config('nova-linkable-field.model');
+
+        if (! class_exists($type)) {
+            throw ValidationException::withMessages([
+                'details' => 'This is not a valid linked type.',
+            ]);
+        }
+
+        if ($type::find($value) == null) {
+            throw ValidationException::withMessages([
+                'details' => 'You must select a valid value.',
+            ]);
+        }
 
         $linkModel::query()->updateOrInsert([
             'linkable_type' => get_class($model),
