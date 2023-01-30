@@ -2,6 +2,7 @@
 
 namespace Dive\Nova\Linkable;
 
+use Dive\Nova\Linkable\Models\HasLinkableValue;
 use Dive\Nova\Linkable\Models\InteractsWithLinks;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -75,9 +76,20 @@ class LinkedCollection extends Collection
                         return null;
                     }
 
-                    return count($items) > 0
-                        ? $items->first()->getLinkableValue($attribute)
-                        : $element->getAttribute($attribute) ?? null;
+                    if ($items->isEmpty()) {
+                        return $element->getAttribute($attribute) ?? null;
+                    }
+
+                    $entry = $items->first();
+
+                    if (! in_array(HasLinkableValue::class, class_implements($entry))) {
+                        $className = get_class($entry);
+
+                        throw new \Exception("The model `{$className}` must implement the `HasLinkableValue` interface!");
+                    }
+
+                    /** @var HasLinkableValue $entry */
+                    return $entry->getLinkableValue($attribute);
                 }
             );
         });
