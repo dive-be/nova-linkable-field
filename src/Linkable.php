@@ -168,16 +168,17 @@ class Linkable extends Field
             ]);
         }
 
-        $linkModel::query()->updateOrInsert([
-            'linkable_type' => get_class($model),
-            'linkable_id' => $model->getKey(),
-        ], [
-            'linkable_type' => get_class($model),
-            'linkable_id' => $model->getKey(),
-            'target_type' => $type,
-            'target_id' => $value,
-            'attribute' => $requestAttribute,
-        ]);
+        $model->saved(fn () => $linkModel::query()->updateOrInsert([
+                'linkable_type' => get_class($model),
+                'linkable_id' => $model->getKey(),
+            ], [
+                'linkable_type' => get_class($model),
+                'linkable_id' => $model->getKey(),
+                'target_type' => $type,
+                'target_id' => $value,
+                'attribute' => $requestAttribute,
+            ])
+        );
     }
 
     private function setManualUrl($model, $requestAttribute, $value)
