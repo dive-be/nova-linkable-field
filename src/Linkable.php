@@ -83,7 +83,7 @@ class Linkable extends Field
         array $columnsToQuery,
         callable $displayCallback = null
     ): self {
-        if (! is_subclass_of($class, Model::class)) {
+        if (! class_exists($class) || ! is_subclass_of($class, Model::class)) {
             throw new \Exception("Invalid model configuration: $class must be an Eloquent model.");
         }
 
@@ -160,18 +160,9 @@ class Linkable extends Field
         );
     }
 
-    /**
-     * @param class-string $type
-     */
     private function setLinkedId($model, $requestAttribute, $type, int $value)
     {
         $linkModel = config('nova-linkable-field.model');
-
-        if (! class_exists($type)) {
-            throw ValidationException::withMessages([
-                'details' => 'This is not a valid linked type.',
-            ]);
-        }
 
         if ($type::find($value) == null) {
             throw ValidationException::withMessages([
