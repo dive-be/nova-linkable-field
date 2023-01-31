@@ -66,6 +66,8 @@ Linkable::make('URL', 'url')
     ),
 ```
 
+You can call the `withLinkable` method multiple times if you want to have multiple link options.
+
 ### Setting up the model
 
 First, let's start off with the **link** class, which is the originator. It needs the `InteractsWithLinks` trait.
@@ -74,18 +76,7 @@ First, let's start off with the **link** class, which is the originator. It need
 use InteractsWithLinks;
 ```
 
-You must set up the mapping for this model. You can do this by setting up the config value in `nova-linkable-field.php`. For example:
-
-```php
-/**
- * How models are linked to each other.
- */
-'mapping' => [
-    NavItem::class => ['url' => Page::class]
-]
-```
-
-So, if you have a homogeneous collection that contains solely models of the same type, you can load this information. Here's how you can do this:
+So, if you have a homogenous collection that contains solely models of the same type, you can load this information. Here's how you can do this:
 
 ```php
 use \Dive\Nova\Linkable\LinkedCollection;
